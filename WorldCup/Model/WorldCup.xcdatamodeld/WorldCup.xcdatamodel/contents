@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21E230" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="GroupEntity" representedClassName="GroupEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="index" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <relationship name="teams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TeamEntity" inverseName="group" inverseEntity="TeamEntity"/>
+    </entity>
+    <entity name="MatchEntity" representedClassName="MatchEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="date" attributeType="Date" defaultDateTimeInterval="670665420" usesScalarValueType="NO"/>
+        <attribute name="goalsAway" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="goalsHome" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="String" defaultValueString=""/>
+        <relationship name="stadium" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StadiumEntity" inverseName="match" inverseEntity="StadiumEntity"/>
+        <relationship name="teams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TeamEntity" inverseName="matches" inverseEntity="TeamEntity"/>
+    </entity>
+    <entity name="StadiumEntity" representedClassName="StadiumEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="capacity" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="city" attributeType="String" defaultValueString=""/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <relationship name="match" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MatchEntity" inverseName="stadium" inverseEntity="MatchEntity"/>
+    </entity>
+    <entity name="TableEntity" representedClassName="TableEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="draw" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="goalsAgainst" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="goalsDifference" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="goalsFor" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="lost" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="played" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="points" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="won" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamEntity" inverseName="table" inverseEntity="TeamEntity"/>
+    </entity>
+    <entity name="TeamEntity" representedClassName="TeamEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="flag" attributeType="String" defaultValueString=""/>
+        <attribute name="groupIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="rank" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GroupEntity" inverseName="teams" inverseEntity="GroupEntity"/>
+        <relationship name="matches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MatchEntity" inverseName="teams" inverseEntity="MatchEntity"/>
+        <relationship name="table" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TableEntity" inverseName="team" inverseEntity="TableEntity"/>
+    </entity>
+    <elements>
+        <element name="GroupEntity" positionX="-390.65234375" positionY="-292.2734375" width="128" height="74"/>
+        <element name="MatchEntity" positionX="-123.921875" positionY="-66.015625" width="128" height="134"/>
+        <element name="StadiumEntity" positionX="71.5390625" positionY="-226.453125" width="128" height="89"/>
+        <element name="TableEntity" positionX="-171" positionY="-99" width="128" height="164"/>
+        <element name="TeamEntity" positionX="-397.94921875" positionY="-95.28515625" width="136.6171875" height="134"/>
+    </elements>
+</model>
