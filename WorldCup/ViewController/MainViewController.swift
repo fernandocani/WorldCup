@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import TestFramework
 
 class MainViewController: UIViewController {
 
@@ -28,30 +27,6 @@ class MainViewController: UIViewController {
         self.title = "MainVC"
         self.setupCountdown()
         self.setupBarButtonItem()
-//        self.viewModel.onUpdate = {
-//            print("success")
-//        }
-//        self.viewModel.onErrorHandling = { [weak self] error in
-//            var message = String()
-//            switch error {
-//            case WCError.ApiError(let string):
-//                message = string
-//            default:
-//                message = error.localizedDescription
-//            }
-//            let alert = UIAlertController(title: "Error",
-//                                          message: message,
-//                                          preferredStyle: .alert)
-//            let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
-//            let actionTryAgain = UIAlertAction(title: "Try Again", style: .default) { [weak self] _ in
-//                self?.createDB()
-//            }
-//            alert.addAction(actionTryAgain)
-//            alert.addAction(actionCancel)
-//            DispatchQueue.main.async {
-//                self?.present(alert, animated: true, completion: nil)
-//            }
-//        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -60,38 +35,6 @@ class MainViewController: UIViewController {
     }
     
     private func setupCountdown() {
-        guard let start: Date = "21/11/2022 19:00".toDate() else { return }
-        print(start)
-//        // Anchor time
-//        let startTime: Date = start
-//        // The total amount of time to wait
-//        let duration: TimeInterval = 200 * 60 // 200 minutes
-//
-//        let formatter = DateComponentsFormatter()
-//        formatter.allowedUnits = [.day, .hour, .minute, .second]
-//        formatter.zeroFormattingBehavior = .dropLeading
-//        formatter.unitsStyle = .short
-//        // The amount of time which has past since we started
-//        var runningTime: TimeInterval = 0
-//
-//        // This is just so I can atrificially update the time
-//        var time: Date = Date()
-//        let cal: Calendar = Calendar.current
-////        repeat {
-////            // Simulate the passing of time, by the minute
-////            // If this was been called from a timer, then you'd
-////            // simply use the current time
-////            time = cal.date(byAdding: .minute, value: 1, to: time)!
-////
-////            // How long have we been running for?
-////            runningTime = time.timeIntervalSince(startTime)
-////            // Have we run out of time?
-////            if runningTime < duration {
-////                // Print the amount of time remaining
-////                print(formatter.string(from: duration - runningTime)!)
-////            }
-////        } while runningTime < duration
-        
         _ = Timer.scheduledTimer(timeInterval: 1,
                                  target: self,
                                  selector: #selector(updateTime),
@@ -173,9 +116,8 @@ class MainViewController: UIViewController {
 
     
     @IBAction func btnGoToTeams() {
-        Coordinator.showModule(parent: self, delegate: self)
-        //self.navigationController?.pushViewController(TeamsViewController(),
-        //                                              animated: true)
+        self.navigationController?.pushViewController(TeamsViewController(),
+                                                      animated: true)
     }
     
     @IBAction func btnGoToGroups() {
@@ -186,14 +128,6 @@ class MainViewController: UIViewController {
     @IBAction func btnGoToStadiums() {
         self.navigationController?.pushViewController(StadiumsViewController(),
                                                       animated: true)
-    }
-    
-}
-
-extension MainViewController: CoordinatorDelegate {
-    
-    func didFinish() {
-        print("didFinish")
     }
     
 }

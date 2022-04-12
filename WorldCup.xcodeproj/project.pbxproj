@@ -36,8 +36,6 @@
 		DF350ECD27F9CC870036BE74 /* GroupsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF350ECC27F9CC870036BE74 /* GroupsViewModel.swift */; };
 		DF350ED027FAB0900036BE74 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF350ECF27FAB0900036BE74 /* CloudKit.framework */; };
 		DF350ED227FABE100036BE74 /* MainViewController+NSToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF350ED127FABE100036BE74 /* MainViewController+NSToolbar.swift */; };
-		DF350F2227FB601A0036BE74 /* TestFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF350F1D27FB5FBE0036BE74 /* TestFramework.framework */; platformFilter = ios; };
-		DF350F2327FB601A0036BE74 /* TestFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DF350F1D27FB5FBE0036BE74 /* TestFramework.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DFA0BB4128054F0400813F2B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB4028054F0400813F2B /* Constants.swift */; };
 		DFA0BB4428055D8300813F2B /* CKStadium.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB4328055D8300813F2B /* CKStadium.swift */; };
 /* End PBXBuildFile section */
@@ -58,20 +56,6 @@
 			remoteInfo = WorldCup;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		DF350F2427FB601A0036BE74 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				DF350F2327FB601A0036BE74 /* TestFramework.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DF326BC727F822CE00497CDF /* WorldCup.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorldCup.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,7 +103,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF350ED027FAB0900036BE74 /* CloudKit.framework in Frameworks */,
-				DF350F2227FB601A0036BE74 /* TestFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +264,6 @@
 				DF326BC327F822CE00497CDF /* Sources */,
 				DF326BC427F822CE00497CDF /* Frameworks */,
 				DF326BC527F822CE00497CDF /* Resources */,
-				DF350F2427FB601A0036BE74 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

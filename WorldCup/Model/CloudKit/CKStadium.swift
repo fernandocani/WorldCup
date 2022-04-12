@@ -18,18 +18,18 @@ class CKStadium {
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
 
     @available(iOS 15.0, *)
-    class func fetch() async throws -> [Stad] {
+    class func fetch() async throws -> [CKStadiumEntity] {
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: "CD_StadiumEntity", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         //print("CKStad Let's go!")
-        let items: [Stad] = await withCheckedContinuation { continuation in
-            var temp = [Stad]()
+        let items: [CKStadiumEntity] = await withCheckedContinuation { continuation in
+            var temp = [CKStadiumEntity]()
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
                     //print(record)
-                    var stad = Stad()
+                    var stad = CKStadiumEntity()
                     stad.recordID   = record.recordID
                     stad.city       = record["CD_city"] as! String
                     stad.capacity   = record["CD_capacity"] as! Int
@@ -57,7 +57,7 @@ class CKStadium {
     
 }
 
-struct Stad: Identifiable {
+struct CKStadiumEntity: Identifiable {
     var id = UUID()
     var recordID: CKRecord.ID?
     var name: String = ""
