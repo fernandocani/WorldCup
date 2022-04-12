@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>ORGANIZATIONNAME</key>
+    <string>ORGANIZATIONNAME STRING</string>
+    <key>COPYRIGHT</key>
+    <string>Copyright (c) ___YEAR___ and Confidential to ___ORGANIZATIONNAME___ All rights reserved.</string>
+	<key>FILEHEADER</key>
+    <string>
+// Copyright (c) ___YEAR___ and Confidential to ___ORGANIZATIONNAME___ All rights reserved.
+//
+// COPYRIGHT:                     ___COPYRIGHT___
+// DATE:                          ___DATE___
+// DEFAULTTOOLCHAINSWIFTVERSION:  ___DEFAULTTOOLCHAINSWIFTVERSION___
+// FILEBASENAME:                  ___FILEBASENAME___
+// FILEBASENAMEASIDENTIFIER:      ___FILEBASENAMEASIDENTIFIER___
+// FILEHEADER:                    *this file*
+// FILENAME:                      ___FILENAME___
+// FULLUSERNAME:                  ___FULLUSERNAME___
+// NSHUMANREADABLECOPYRIGHTPLIST: ___NSHUMANREADABLECOPYRIGHTPLIST___
+// ORGANIZATIONNAME:              ___ORGANIZATIONNAME___
+// PACKAGENAME:                   ___PACKAGENAME___
+// PACKAGENAMEASIDENTIFIER:       ___PACKAGENAMEASIDENTIFIER___
+// PRODUCTNAME:                   ___PRODUCTNAME___
+// PROJECTNAME:                   ___PROJECTNAME___
+// RUNNINGMACOSVERSION:           ___RUNNINGMACOSVERSION___
+// TARGETNAME:                    ___TARGETNAME___
+// TIME:                          ___TIME___
+// USERNAME:                      ___USERNAME___
+// UUID:                          ___UUID___
+// WORKSPACENAME:                 ___WORKSPACENAME___
+// YEAR:                          ___YEAR___</string>
+</dict>
+</plist>
+
+<! https://matrejek.eu/posts/customizing-xcode-header-comments/ >
+<! https://help.apple.com/xcode/mac/11.4/index.html?localePath=en.lproj#/dev7fe737ce0 >
+
