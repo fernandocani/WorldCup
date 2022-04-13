@@ -1,5 +1,5 @@
 //
-//  CKStadium.swift
+//  CKTables.swift
 //  WorldCup
 //
 //  Created by Fernando Cani on 12/04/22.
@@ -8,31 +8,32 @@
 import Foundation
 import CloudKit
 
-enum CKStadiumRecordKeys {
-    static let id       = "id"
-    static let name     = "name"
-    static let capacity = "capacity"
-    static let city     = "city"
+enum CKTablesRecordKeys {
+    static let id              = "id"
+    static let draw            = "draw"
+    static let goalsAgainst    = "goalsAgainst"
+    static let goalsDifference = "goalsDifference"
+    static let goalsFor        = "goalsFor"
+    static let lost            = "lost"
+    static let played          = "played"
+    static let points          = "points"
+    static let teamID          = "teamID"
+    static let won             = "won"
 }
 
-class CKStadium {
-    //let container = CKContainer.default()
-    //if let containerIdentifier = container.containerIdentifier {
-    //    print(containerIdentifier)
-    //}
+class CKTables {
     
-    //static let database = CKContainer.default().publicCloudDatabase
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: stadiums,
+    class func publish(tables: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
+        let saveOperation = CKModifyRecordsOperation(recordsToSave: tables,
                                                      recordIDsToDelete: nil)
         print("publishing...")
         if #available(iOS 15.0, *) {
             saveOperation.modifyRecordsResultBlock = { result in
                 switch result {
                 case .success(_):
-                    callback(.success("CKStadium: \(#function) \(stadiums.count) stadiums"))
+                    callback(.success("CKTables: \(#function) \(tables.count) tables"))
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
@@ -45,23 +46,30 @@ class CKStadium {
         database.add(saveOperation)
     }
     
-    class func fetch(callback: @escaping (Result<[CKStadiumEntity], WCError>) -> Void) {
+    class func fetch(callback: @escaping (Result<[CKTablesEntity], WCError>) -> Void) {
         let predicate = NSPredicate(value: true)
-        let query = CKQuery(recordType: RecordTypes.stadiums, predicate: predicate)
+        //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
+        let query = CKQuery(recordType: RecordTypes.players, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKStadiumEntity]()
+        var temp = [CKTablesEntity]()
         print("fetching...")
         if #available(iOS 15.0, *) {
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
                     //print(record)
-                    var item = CKStadiumEntity()
-                    item.recordID   = record.recordID
-                    item.id         = record[CKStadiumRecordKeys.id] as! String
-                    item.name       = record[CKStadiumRecordKeys.name] as! String
-                    item.city       = record[CKStadiumRecordKeys.city] as! String
-                    item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
+                    var item = CKTablesEntity()
+                    item.recordID        = record.recordID
+                    item.id              = record[CKTablesRecordKeys.id] as! String
+                    item.draw            = record[CKTablesRecordKeys.draw] as! Int
+                    item.goalsAgainst    = record[CKTablesRecordKeys.goalsAgainst] as! Int
+                    item.goalsDifference = record[CKTablesRecordKeys.goalsDifference] as! Int
+                    item.goalsFor        = record[CKTablesRecordKeys.goalsFor] as! Int
+                    item.lost            = record[CKTablesRecordKeys.lost] as! Int
+                    item.played          = record[CKTablesRecordKeys.played] as! Int
+                    item.points          = record[CKTablesRecordKeys.points] as! Int
+                    item.teamID          = record[CKTablesRecordKeys.teamID] as! String
+                    item.won             = record[CKTablesRecordKeys.won] as! Int
                     temp.append(item)
                 case let .failure(error):
                     // if a single record failed to get fetched, you would see why here.
@@ -72,7 +80,7 @@ class CKStadium {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful \(String(describing: cursor))")
+                    //print("the query was successful")
                     DispatchQueue.main.async {
                         callback(.success(temp))
                     }
@@ -94,7 +102,7 @@ class CKStadium {
             saveOperation.modifyRecordsResultBlock = { result in
                 switch result {
                 case .success(_):
-                    print("CKStadium: ", #function, "\(ids.count) stadiums")
+                    print("CKTables: ", #function, "\(ids.count) tables")
                     callback(true)
                 case .failure(let error):
                     print(error.localizedDescription)
@@ -110,10 +118,16 @@ class CKStadium {
     
 }
 
-struct CKStadiumEntity: Identifiable {
+struct CKTablesEntity: Identifiable {
     var id: String = ""
     var recordID: CKRecord.ID?
-    var name: String = ""
-    var capacity: Int = 0
-    var city: String = ""
+    var teamID: String = ""
+    var points: Int = 0
+    var played: Int = 0
+    var won: Int = 0
+    var lost: Int = 0
+    var draw: Int = 0
+    var goalsAgainst: Int = 0
+    var goalsFor: Int = 0
+    var goalsDifference: Int = 0
 }

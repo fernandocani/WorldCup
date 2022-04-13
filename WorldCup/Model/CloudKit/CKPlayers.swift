@@ -1,5 +1,5 @@
 //
-//  CKStadium.swift
+//  CKPlayers.swift
 //  WorldCup
 //
 //  Created by Fernando Cani on 12/04/22.
@@ -8,31 +8,31 @@
 import Foundation
 import CloudKit
 
-enum CKStadiumRecordKeys {
+enum CKPlayersRecordKeys {
     static let id       = "id"
     static let name     = "name"
-    static let capacity = "capacity"
-    static let city     = "city"
+    static let birth    = "birth"
+    static let gender   = "gender"
 }
 
-class CKStadium {
-    //let container = CKContainer.default()
-    //if let containerIdentifier = container.containerIdentifier {
-    //    print(containerIdentifier)
-    //}
+class CKPlayers {
     
-    //static let database = CKContainer.default().publicCloudDatabase
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: stadiums,
+    class func publish(players: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
+        fatalError("falta implementar")
+        //let recordToDiscover = CKRecord(recordType: RecordTypes.players)
+        //recordToDiscover.setValue("Rafa",   forKey: CKPlayersRecordKeys.name)
+        //recordToDiscover.setValue(Date(),   forKey: CKPlayersRecordKeys.birth)
+        //recordToDiscover.setValue("F",      forKey: CKPlayersRecordKeys.gender)
+        let saveOperation = CKModifyRecordsOperation(recordsToSave: players,
                                                      recordIDsToDelete: nil)
         print("publishing...")
         if #available(iOS 15.0, *) {
             saveOperation.modifyRecordsResultBlock = { result in
                 switch result {
                 case .success(_):
-                    callback(.success("CKStadium: \(#function) \(stadiums.count) stadiums"))
+                    callback(.success("CKPlayers: \(#function) \(players.count) players"))
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
@@ -45,23 +45,24 @@ class CKStadium {
         database.add(saveOperation)
     }
     
-    class func fetch(callback: @escaping (Result<[CKStadiumEntity], WCError>) -> Void) {
+    class func fetch(callback: @escaping (Result<[CKPlayersEntity], WCError>) -> Void) {
         let predicate = NSPredicate(value: true)
-        let query = CKQuery(recordType: RecordTypes.stadiums, predicate: predicate)
+        //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
+        let query = CKQuery(recordType: RecordTypes.players, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKStadiumEntity]()
+        var temp = [CKPlayersEntity]()
         print("fetching...")
         if #available(iOS 15.0, *) {
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
                     //print(record)
-                    var item = CKStadiumEntity()
+                    var item = CKPlayersEntity()
                     item.recordID   = record.recordID
-                    item.id         = record[CKStadiumRecordKeys.id] as! String
-                    item.name       = record[CKStadiumRecordKeys.name] as! String
-                    item.city       = record[CKStadiumRecordKeys.city] as! String
-                    item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
+                    item.id         = record[CKPlayersRecordKeys.id] as! String
+                    item.name       = record[CKPlayersRecordKeys.name] as! String
+                    item.gender     = record[CKPlayersRecordKeys.gender] as! String
+                    item.birth      = record[CKPlayersRecordKeys.birth] as! Date
                     temp.append(item)
                 case let .failure(error):
                     // if a single record failed to get fetched, you would see why here.
@@ -72,7 +73,7 @@ class CKStadium {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful \(String(describing: cursor))")
+                    //print("the query was successful")
                     DispatchQueue.main.async {
                         callback(.success(temp))
                     }
@@ -86,34 +87,12 @@ class CKStadium {
         }
     }
     
-    class func removeAll(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
-                                                     recordIDsToDelete: ids)
-        print("removing...")
-        if #available(iOS 15.0, *) {
-            saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    print("CKStadium: ", #function, "\(ids.count) stadiums")
-                    callback(true)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
-        }
-        database.add(saveOperation)
-    }
-    
 }
 
-struct CKStadiumEntity: Identifiable {
+struct CKPlayersEntity: Identifiable {
     var id: String = ""
     var recordID: CKRecord.ID?
     var name: String = ""
-    var capacity: Int = 0
-    var city: String = ""
+    var gender: String = ""
+    var birth: Date = Date()
 }

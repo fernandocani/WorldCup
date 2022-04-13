@@ -25,15 +25,21 @@ class StadiumsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Stadium"
-        self.fetch(cloud: false)
+        self.fetch(cloud: true)
     }
     
     func fetch(cloud: Bool) {
         if cloud {
             if #available(iOS 15.0, *) {
-                Task {
-                    let stads = try! await CKStadium.fetch()
-                    print(stads)
+                CKStadium.fetch { result in
+                    switch result {
+                    case .success(let itens):
+                        for item in itens {
+                            print(item)
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
                 }
             }
         } else {

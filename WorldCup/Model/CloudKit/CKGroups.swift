@@ -1,5 +1,5 @@
 //
-//  CKStadium.swift
+//  CKGroups.swift
 //  WorldCup
 //
 //  Created by Fernando Cani on 12/04/22.
@@ -8,31 +8,25 @@
 import Foundation
 import CloudKit
 
-enum CKStadiumRecordKeys {
+enum CKGroupsRecordKeys {
     static let id       = "id"
     static let name     = "name"
-    static let capacity = "capacity"
-    static let city     = "city"
+    static let index    = "index"
 }
 
-class CKStadium {
-    //let container = CKContainer.default()
-    //if let containerIdentifier = container.containerIdentifier {
-    //    print(containerIdentifier)
-    //}
+class CKGroups {
     
-    //static let database = CKContainer.default().publicCloudDatabase
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: stadiums,
+    class func publish(groups: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
+        let saveOperation = CKModifyRecordsOperation(recordsToSave: groups,
                                                      recordIDsToDelete: nil)
         print("publishing...")
         if #available(iOS 15.0, *) {
             saveOperation.modifyRecordsResultBlock = { result in
                 switch result {
                 case .success(_):
-                    callback(.success("CKStadium: \(#function) \(stadiums.count) stadiums"))
+                    callback(.success("CKGroups: \(#function) \(groups.count) groups"))
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
@@ -45,23 +39,23 @@ class CKStadium {
         database.add(saveOperation)
     }
     
-    class func fetch(callback: @escaping (Result<[CKStadiumEntity], WCError>) -> Void) {
+    class func fetch(callback: @escaping (Result<[CKGroupsEntity], WCError>) -> Void) {
         let predicate = NSPredicate(value: true)
-        let query = CKQuery(recordType: RecordTypes.stadiums, predicate: predicate)
+        //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
+        let query = CKQuery(recordType: RecordTypes.groups, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKStadiumEntity]()
+        var temp = [CKGroupsEntity]()
         print("fetching...")
         if #available(iOS 15.0, *) {
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
                     //print(record)
-                    var item = CKStadiumEntity()
+                    var item = CKGroupsEntity()
                     item.recordID   = record.recordID
-                    item.id         = record[CKStadiumRecordKeys.id] as! String
-                    item.name       = record[CKStadiumRecordKeys.name] as! String
-                    item.city       = record[CKStadiumRecordKeys.city] as! String
-                    item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
+                    item.id         = record[CKGroupsRecordKeys.id] as! String
+                    item.name       = record[CKGroupsRecordKeys.name] as! String
+                    item.index      = record[CKGroupsRecordKeys.index] as! Int
                     temp.append(item)
                 case let .failure(error):
                     // if a single record failed to get fetched, you would see why here.
@@ -72,7 +66,7 @@ class CKStadium {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful \(String(describing: cursor))")
+                    //print("the query was successful")
                     DispatchQueue.main.async {
                         callback(.success(temp))
                     }
@@ -94,7 +88,7 @@ class CKStadium {
             saveOperation.modifyRecordsResultBlock = { result in
                 switch result {
                 case .success(_):
-                    print("CKStadium: ", #function, "\(ids.count) stadiums")
+                    print("CKGroups: ", #function, "\(ids.count) groups")
                     callback(true)
                 case .failure(let error):
                     print(error.localizedDescription)
@@ -110,10 +104,9 @@ class CKStadium {
     
 }
 
-struct CKStadiumEntity: Identifiable {
+struct CKGroupsEntity: Identifiable {
     var id: String = ""
     var recordID: CKRecord.ID?
     var name: String = ""
-    var capacity: Int = 0
-    var city: String = ""
+    var index: Int = 0
 }
