@@ -11,6 +11,7 @@ class MainViewController: UIViewController {
 
     @IBOutlet weak var lblCountdown: UILabel!
     @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var progress: UIActivityIndicatorView!
     
     let viewModel: MainViewModel!
     lazy var startDate: Date = {
@@ -41,8 +42,6 @@ class MainViewController: UIViewController {
         self.buildMacToolbar()
     }
     
-    
-    
     private func setupBarButtonItem() {
         let itemNewCode = UIBarButtonItem(barButtonSystemItem: .refresh,
                                           target: self,
@@ -52,25 +51,98 @@ class MainViewController: UIViewController {
     
     private func setupAddtitionalButtons() {
         if #available(iOS 15.0, *) {
-            let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-                CKManager.shared.publishFromScratch { result in
-                    switch result {
-                    case .success(_):
-                        print("Success -publishFromScratch")
-                        self.createAlert(title: "publishFromScratch", message: "success")
-                    case .failure(let error):
-                        fatalError(error.localizedDescription)
-                    }
-                }
-            }))
-            buttom1.setTitle("Populate CK", for: .normal)
-            self.stackView.addArrangedSubview(buttom1)
-            
+            self.stackView.addArrangedSubview(stackViewAll())
             self.stackView.addArrangedSubview(stackViewGroups())
             self.stackView.addArrangedSubview(stackViewTeams())
             self.stackView.addArrangedSubview(stackViewStadiums())
             self.stackView.addArrangedSubview(stackViewTables())
         }
+    }
+    
+    @available(iOS 15.0, *)
+    func stackViewAll() -> UIStackView {
+        let stackView1 = UIStackView()
+        stackView1.spacing = 4
+        stackView1.axis = .horizontal
+        stackView1.distribution = .fillEqually
+        
+        let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
+            CKManager.shared.publishFromScratch { result in
+                self.setProgress(animated: false)
+                switch result {
+                case .success(_):
+                    print("Success -publishFromScratch")
+                    self.createAlert(title: "publishFromScratch", message: "success")
+                case .failure(let error):
+                    fatalError(error.localizedDescription)
+                }
+            }
+        }))
+        let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
+            CKManager.shared.fetchGroups { groups in
+                CKManager.shared.fetchTeams { teams in
+                    CKManager.shared.fetchStadiums { stadiums in
+                        CKManager.shared.fetchTables { tables in
+                            self.setProgress(animated: false)
+                            self.createAlert(title: "Fetch All", message: """
+                            Groups: \(groups.count)
+                            Teams: \(teams.count)
+                            Stadiums: \(stadiums.count)
+                            Tables: \(tables.count)
+                            """)
+                        }
+                    }
+                }
+            }
+        }))
+        let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
+            CKManager.shared.fetchGroups { groups in
+                print("Success fetchGroups")
+                let groupIDS = groups.map({ $0.recordID! })
+                CKManager.shared.fetchTeams { teams in
+                    print("Success fetchTeams")
+                    let teamsIDS = teams.map({ $0.recordID! })
+                    CKManager.shared.fetchStadiums { stadiums in
+                        print("Success fetchStadiums")
+                        let stadiumsIDS = stadiums.map({ $0.recordID! })
+                        CKManager.shared.fetchTables { tables in
+                            print("Success fetchTables")
+                            let tablesIDS = tables.map({ $0.recordID! })
+                            CKManager.shared.removeGroups(by: groupIDS) { boolGroups in
+                                print("Success removeGroups")
+                                CKManager.shared.removeTeams(by: teamsIDS) { boolTeams in
+                                    print("Success removeTeams")
+                                    CKManager.shared.removeStadiums(by: stadiumsIDS) { boolStadiums in
+                                        print("Success removeStadiums")
+                                        CKManager.shared.removeTables(by: tablesIDS) { boolTables in
+                                            print("Success removeTables")
+                                            self.setProgress(animated: false)
+                                            self.createAlert(title: "remove All", message: """
+                                            Groups: \(boolGroups)
+                                            Teams: \(boolTeams)
+                                            Stadiums: \(boolStadiums)
+                                            Tables: \(boolTables)
+                                            """)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }))
+        
+        buttom1.setTitle("🔼 All", for: .normal)
+        buttom2.setTitle("⏬ All", for: .normal)
+        buttom3.setTitle("❌ All", for: .normal)
+        stackView1.addArrangedSubview(buttom1)
+        stackView1.addArrangedSubview(buttom2)
+        stackView1.addArrangedSubview(buttom3)
+        return stackView1
     }
     
     @available(iOS 15.0, *)
@@ -86,13 +158,17 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            CKManager.shared.fetchGroups { groups in
-                print(groups.count)
+            self.setProgress(animated: true)
+            CKManager.shared.fetchGroups { itens in
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Groups", message: "\(itens.count) groups")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchGroups { itens in
                 CKManager.shared.removeGroups(by: itens.map({ $0.recordID! })) { bool in
+                    self.setProgress(animated: false)
                     self.createAlert(title: "removeGroups", message: "\(bool)")
                 }
             }
@@ -120,13 +196,17 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchTeams { itens in
-                print(itens.count)
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Teams", message: "\(itens.count) teams")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchTeams { itens in
                 CKManager.shared.removeTeams(by: itens.map({ $0.recordID! })) { bool in
+                    self.setProgress(animated: false)
                     self.createAlert(title: "removeTeams", message: "\(bool)")
                 }
             }
@@ -154,13 +234,17 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchStadiums { itens in
-                print(itens.count)
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Stadiums", message: "\(itens.count) stadiums")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchStadiums { itens in
                 CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! })) { bool in
+                    self.setProgress(animated: false)
                     self.createAlert(title: "removeStadiums", message: "\(bool)")
                 }
             }
@@ -188,13 +272,17 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchTables { itens in
-                print(itens.count)
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Tables", message: "\(itens.count) tables")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            self.setProgress(animated: true)
             CKManager.shared.fetchTables { itens in
                 CKManager.shared.removeTables(by: itens.map({ $0.recordID! })) { bool in
+                    self.setProgress(animated: false)
                     self.createAlert(title: "removeTables", message: "\(bool)")
                 }
             }
@@ -306,10 +394,23 @@ extension MainViewController {
     }
     
     private func createAlert(title: String? = nil, message: String? = nil) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+}
+
+extension MainViewController {
+ 
+    func setProgress(animated: Bool) {
+        DispatchQueue.main.async {
+            switch animated {
+            case true: self.progress.startAnimating()
+            case false: self.progress.stopAnimating()
+            }
         }
     }
     

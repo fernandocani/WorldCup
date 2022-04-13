@@ -49,7 +49,7 @@ class CKTables {
     class func fetch(callback: @escaping (Result<[CKTablesEntity], WCError>) -> Void) {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
-        let query = CKQuery(recordType: RecordTypes.players, predicate: predicate)
+        let query = CKQuery(recordType: RecordTypes.tables, predicate: predicate)
         let operation = CKQueryOperation(query: query)
         var temp = [CKTablesEntity]()
         print("fetching...")

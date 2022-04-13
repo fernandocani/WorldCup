@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -12,6 +13,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController" customModule="WorldCup" customModuleProvider="target">
             <connections>
                 <outlet property="lblCountdown" destination="44l-hR-uUN" id="nbb-E9-axS"/>
+                <outlet property="progress" destination="9Pg-Mj-ayw" id="XGh-k3-plL"/>
                 <outlet property="stackView" destination="U0M-S1-11j" id="Z0d-KY-BSV"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -56,18 +58,27 @@
                         </button>
                     </subviews>
                 </stackView>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="9Pg-Mj-ayw">
+                    <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                    <color key="color" name="AccentColor"/>
+                </activityIndicatorView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="U0M-S1-11j" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="4DT-gq-oSC"/>
+                <constraint firstItem="9Pg-Mj-ayw" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="H9D-Av-dSW"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="U0M-S1-11j" secondAttribute="trailing" constant="16" id="YQV-dh-NEM"/>
+                <constraint firstItem="9Pg-Mj-ayw" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="b9G-Xa-CPR"/>
                 <constraint firstItem="U0M-S1-11j" firstAttribute="centerY" secondItem="fnl-2z-Ty3" secondAttribute="centerY" id="cL4-de-NG9"/>
             </constraints>
             <point key="canvasLocation" x="139" y="113"/>
         </view>
     </objects>
     <resources>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
