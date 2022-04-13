@@ -10,6 +10,12 @@ import UIKit
 #if targetEnvironment(macCatalyst)
 extension MainViewController: NSToolbarDelegate {
     
+    enum ToolbarIcons {
+        static let iconTeams = UIImage(systemName: "photo")
+        static let iconGroups = UIImage(systemName: "photo")
+        static let iconStadiums = UIImage(systemName: "square.and.arrow.up")
+    }
+    
     enum Toolbar {
         static let itemTeams = NSToolbarItem.Identifier(rawValue: "teams")
         static let itemGroups = NSToolbarItem.Identifier(rawValue: "groups")
@@ -20,21 +26,21 @@ extension MainViewController: NSToolbarDelegate {
         switch itemIdentifier {
         case Toolbar.itemTeams:
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
-            item.image = UIImage(systemName: "photo")//?.forNSToolbar()
+            item.image = ToolbarIcons.iconTeams
             item.target = self
             item.action = #selector(btnGoToTeams)
             item.label = "Teams"
             return item
         case Toolbar.itemGroups:
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
-            item.image = UIImage(systemName: "photo")//?.forNSToolbar()
+            item.image = ToolbarIcons.iconGroups
             item.target = self
             item.action = #selector(btnGoToGroups)
             item.label = "Groups"
             return item
         case Toolbar.itemStadium:
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
-            item.image = UIImage(systemName: "square.and.arrow.up")//?.forNSToolbar()
+            item.image = ToolbarIcons.iconStadiums
             item.target = self
             item.action = #selector(btnGoToStadiums)
             item.label = "Stadiums"
@@ -62,11 +68,14 @@ extension MainViewController {
         guard let windowScene = view.window?.windowScene else {
             return
         }
+        windowScene.title = "Catalyst App"
         if let titlebar = windowScene.titlebar {
             let toolbar = NSToolbar(identifier: "toolbar")
             toolbar.delegate = self
             toolbar.allowsUserCustomization = true
             titlebar.toolbar = toolbar
+            titlebar.toolbarStyle = .unified
+            titlebar.separatorStyle = .shadow
         }
         #endif
     }

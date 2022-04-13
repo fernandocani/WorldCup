@@ -21,6 +21,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = navBar
         window.makeKeyAndVisible()
         self.window = window
+        
+        #if targetEnvironment(macCatalyst)
+        windowScene.sizeRestrictions?.minimumSize = CGSize(width: 440, height: 600)
+        //windowScene.sizeRestrictions?.maximumSize = CGSize(width: 1200, height: 1200)
+        #endif
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
