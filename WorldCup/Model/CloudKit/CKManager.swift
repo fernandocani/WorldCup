@@ -255,5 +255,20 @@ extension CKManager {
         item.setValue(0, forKey: CKTablesRecordKeys.goalsDifference)
         return (uuidString, item)
     }
+    
+    private func createMatch(index: Int) -> CKRecord {
+        let uuidString = UUID().uuidString
+        let item = CKRecord(recordType: RecordTypes.matches)
+        item.setValue(uuidString, forKey: CKMatchesRecordKeys.id)
+        item.setValue(index, forKey: CKMatchesRecordKeys.index)
+        item.setValue(0, forKey: CKMatchesRecordKeys.date)
+        item.setValue(0, forKey: CKMatchesRecordKeys.goalsAway)
+        item.setValue(0, forKey: CKMatchesRecordKeys.goalsHome)
+        item.setValue("", forKey: CKMatchesRecordKeys.type)
+        item.setValue("", forKey: CKMatchesRecordKeys.teamHomeID)
+        item.setValue("", forKey: CKMatchesRecordKeys.teamAwayID)
+        item.setValue("", forKey: CKMatchesRecordKeys.stadiumID)
+        return item
+    }
 
 }

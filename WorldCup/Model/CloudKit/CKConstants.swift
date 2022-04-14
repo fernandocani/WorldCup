@@ -292,6 +292,19 @@ extension CKManager {
             case .alJanoub:             return "Al Wakrah"
             }
         }
+        
+        var index: Int {
+            switch self {
+            case .alBayt:               return 1
+            case .khalifaInternational: return 2
+            case .alThumama:            return 3
+            case .ahmadBinAli:          return 4
+            case .lusail:               return 5
+            case .stadium974:           return 6
+            case .educationCity:        return 7
+            case .alJanoub:             return 8
+            }
+        }
     }
     
     enum EnumGroups: CaseIterable {
