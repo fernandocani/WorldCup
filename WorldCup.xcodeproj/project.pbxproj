@@ -45,6 +45,8 @@
 		DFA0BB73280602AD00813F2B /* CKGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB72280602AD00813F2B /* CKGroups.swift */; };
 		DFA0BB75280602F800813F2B /* CKConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB74280602F800813F2B /* CKConstants.swift */; };
 		DFA0BB7728060D2300813F2B /* CKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB7628060D2300813F2B /* CKManager.swift */; };
+		DFAEE142280998F500D6E0E2 /* SidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE140280998F500D6E0E2 /* SidebarViewController.swift */; };
+		DFAEE143280998F500D6E0E2 /* SidebarViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DFAEE141280998F500D6E0E2 /* SidebarViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +111,8 @@
 		DFA0BB72280602AD00813F2B /* CKGroups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKGroups.swift; sourceTree = "<group>"; };
 		DFA0BB74280602F800813F2B /* CKConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKConstants.swift; sourceTree = "<group>"; };
 		DFA0BB7628060D2300813F2B /* CKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKManager.swift; sourceTree = "<group>"; };
+		DFAEE140280998F500D6E0E2 /* SidebarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewController.swift; sourceTree = "<group>"; };
+		DFAEE141280998F500D6E0E2 /* SidebarViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SidebarViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +210,7 @@
 		DF326BFF27F8231300497CDF /* View */ = {
 			isa = PBXGroup;
 			children = (
+				DFAEE141280998F500D6E0E2 /* SidebarViewController.xib */,
 				DF326C0627F8242C00497CDF /* MainViewController.xib */,
 				DF326C1227F9B11800497CDF /* TeamsViewController.xib */,
 				DF326C1A27F9B13000497CDF /* GroupsViewController.xib */,
@@ -219,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				DF326C0327F823DA00497CDF /* MainNavigationController.swift */,
+				DFAEE140280998F500D6E0E2 /* SidebarViewController.swift */,
 				DF326C0527F8242C00497CDF /* MainViewController.swift */,
 				DF350ED127FABE100036BE74 /* MainViewController+NSToolbar.swift */,
 				DF326C1127F9B11800497CDF /* TeamsViewController.swift */,
@@ -382,6 +388,7 @@
 				DF326C1827F9B12600497CDF /* StadiumsViewController.xib in Resources */,
 				DF326BDA27F822CF00497CDF /* LaunchScreen.storyboard in Resources */,
 				DF326C1427F9B11800497CDF /* TeamsViewController.xib in Resources */,
+				DFAEE143280998F500D6E0E2 /* SidebarViewController.xib in Resources */,
 				DF326C0827F8242C00497CDF /* MainViewController.xib in Resources */,
 				DF326C1C27F9B13000497CDF /* GroupsViewController.xib in Resources */,
 				DF326BD727F822CF00497CDF /* Assets.xcassets in Resources */,
@@ -437,6 +444,7 @@
 				DF326C1027F8583200497CDF /* MainViewModel.swift in Sources */,
 				DFA0BB7728060D2300813F2B /* CKManager.swift in Sources */,
 				DFA0BB4428055D8300813F2B /* CKStadium.swift in Sources */,
+				DFAEE142280998F500D6E0E2 /* SidebarViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

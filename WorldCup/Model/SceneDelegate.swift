@@ -16,12 +16,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        let navBar = MainNavigationController(rootViewController: MainViewController())
-        navBar.navigationBar.prefersLargeTitles = false
-        window.rootViewController = navBar
-        window.makeKeyAndVisible()
-        self.window = window
-        
+        //https://www.youtube.com/watch?v=Nx22LOSK614
+        //https://www.youtube.com/watch?v=Gc1NSQS5lX0
+        switch window.traitCollection.userInterfaceIdiom {
+        case .pad, .mac:
+            window.rootViewController = self.createSplitViewController()
+            window.makeKeyAndVisible()
+            self.window = window
+        case .phone:
+            window.rootViewController = self.createMainViewController()
+            (window.rootViewController as? UISplitViewController)?.delegate = self
+            window.makeKeyAndVisible()
+            self.window = window
+        default:
+            fatalError("falta implementar")
+        }
+
         #if targetEnvironment(macCatalyst)
         windowScene.sizeRestrictions?.minimumSize = CGSize(width: 440, height: 600)
         //windowScene.sizeRestrictions?.maximumSize = CGSize(width: 1200, height: 1200)
@@ -59,4 +69,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 
+}
+
+extension SceneDelegate {
+    
+    func createSplitViewController() -> UISplitViewController {
+        let splitVC = UISplitViewController(style: .doubleColumn)
+        splitVC.preferredDisplayMode = .twoBesideSecondary
+        splitVC.setViewController(SidebarViewController(), for: .primary)
+        splitVC.setViewController(self.createMainViewController(), for: .secondary)
+        return splitVC
+    }
+    
+    func createMainViewController() -> UINavigationController {
+        let navBar = MainNavigationController(rootViewController: MainViewController())
+        navBar.navigationBar.prefersLargeTitles = false
+        return navBar
+    }
+    
+}
+
+extension SceneDelegate: UISplitViewControllerDelegate {
+    
+    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: Any?) -> Bool {
+        guard let tabController = splitViewController.viewControllers.first as? UITabBarController else { return false}
+        var vcToShow = vc
+        if let nav = vc as? UINavigationController, let topViewController = nav.topViewController {
+            vcToShow = topViewController
+        }
+        tabController.selectedViewController?.show(vcToShow, sender: self)
+        return true
+    }
+    
 }
