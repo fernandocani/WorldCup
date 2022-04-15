@@ -13,6 +13,7 @@ enum CKStadiumRecordKeys {
     static let name     = "name"
     static let capacity = "capacity"
     static let city     = "city"
+    static let index    = "index"
 }
 
 class CKStadium {
@@ -62,6 +63,7 @@ class CKStadium {
                     item.name       = record[CKStadiumRecordKeys.name] as! String
                     item.city       = record[CKStadiumRecordKeys.city] as! String
                     item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
+                    //item.index      = record[CKStadiumRecordKeys.index] as! Int
                     temp.append(item)
                 case let .failure(error):
                     // if a single record failed to get fetched, you would see why here.
@@ -116,4 +118,5 @@ struct CKStadiumEntity: Identifiable {
     var name: String = ""
     var capacity: Int = 0
     var city: String = ""
+    var index: Int = 0
 }
