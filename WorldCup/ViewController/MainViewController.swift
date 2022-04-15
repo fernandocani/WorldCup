@@ -35,6 +35,11 @@ class MainViewController: UIViewController {
         self.setupCountdown()
         self.setupBarButtonItem()
         self.setupAddtitionalButtons()
+        
+        //for i in 1...64 {
+        //    print("case match\(i)")
+        //}
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -229,8 +234,10 @@ class MainViewController: UIViewController {
         stackView1.distribution = .fillEqually
         
         let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            //CKManager.shared.publishStadiums() { result in
-            //
+            //self.setProgress(animated: true)
+            //CKManager.shared.publishStadiums(CKManager.shared.convertEntityToCK(originals: CKManager.shared.createStadiums())) { result in
+            //    self.setProgress(animated: false)
+            //    self.createAlert(title: "publishStadiums", message: "\(result)")
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
@@ -249,7 +256,6 @@ class MainViewController: UIViewController {
                 }
             }
         }))
-        
         buttom1.setTitle("🔼  Stad", for: .normal)
         buttom2.setTitle("⏬  Stad", for: .normal)
         buttom3.setTitle("❌  Stad", for: .normal)

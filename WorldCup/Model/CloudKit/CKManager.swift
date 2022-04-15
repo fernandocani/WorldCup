@@ -13,7 +13,7 @@ final class CKManager {
     static let shared = CKManager()
     
     func publishFromScratch(callback: @escaping (Result<String, WCError>) -> Void) {
-        let stadiums = self.createStadiums()
+        let stadiums = self.convertEntityToCK(originals: self.createStadiums())
         let groups = self.createGroups()
         let teamsAndTables = self.createTeamsAndTables(groups: groups)
         let teams = teamsAndTables.teams
@@ -49,8 +49,8 @@ final class CKManager {
     
     // MARK: - Stadiums
     
-    private func publishStadiums(_ stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        CKStadium.publish(stadiums: self.createStadiums()) { result in
+    func publishStadiums(_ stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
+        CKStadium.publish(stadiums: self.convertEntityToCK(originals: self.createStadiums())) { result in
             callback(result)
         }
     }
@@ -155,10 +155,6 @@ final class CKManager {
         }
     }
     
-    
-    
-    
-    
     // MARK: - Players
     
     private func publishPlayers(callback: @escaping (Result<String, WCError>) -> Void) {
@@ -167,8 +163,6 @@ final class CKManager {
             callback(result)
         }
     }
-    
-    
     
     // MARK: - Matches
     
@@ -182,14 +176,45 @@ final class CKManager {
 
 extension CKManager {
     
-    private func createStadiums() -> [CKRecord] {
+    private func convertEntityToCK(originals: [Any]) -> [CKRecord] {
         var itens = [CKRecord]()
+        switch originals {
+        case let (array as [CKStadiumEntity]) as Any:   print("CKStadiumEntity: \(array)")
+            for value in array {
+                let item = CKRecord(recordType: RecordTypes.stadiums)
+                item.setValue(value.id, forKey: CKStadiumRecordKeys.id)
+                item.setValue(value.name, forKey: CKStadiumRecordKeys.name)
+                item.setValue(value.capacity, forKey: CKStadiumRecordKeys.capacity)
+                item.setValue(value.city, forKey: CKStadiumRecordKeys.city)
+                item.setValue(value.index, forKey: CKStadiumRecordKeys.index)
+                itens.append(item)
+            }
+        case let (array as [CKPlayersEntity]) as Any:   print("CKPlayersEntity: \(array)")
+        case let (array as [CKTeamsEntity]) as Any:     print("CKTeamsEntity: \(array)")
+        case let (array as [CKTablesEntity]) as Any:    print("CKTablesEntity: \(array)")
+        case let (array as [CKMatchesEntity]) as Any:   print("CKMatchesEntity: \(array)")
+        case let (array as [CKGroupsEntity]) as Any:    print("CKGroupsEntity: \(array)")
+            for value in EnumGroups.allCases {
+                let item = CKRecord(recordType: RecordTypes.groups)
+                item.setValue(UUID().uuidString, forKey: CKGroupsRecordKeys.id)
+                item.setValue(value.name, forKey: CKGroupsRecordKeys.name)
+                item.setValue(value.index, forKey: CKGroupsRecordKeys.index)
+                itens.append(item)
+            }
+        default: break
+        }
+        return itens
+    }
+    
+    private func createStadiums() -> [CKStadiumEntity] {
+        var itens = [CKStadiumEntity]()
         for value in EnumStadium.allCases {
-            let item = CKRecord(recordType: RecordTypes.stadiums)
-            item.setValue(UUID().uuidString, forKey: CKStadiumRecordKeys.id)
-            item.setValue(value.name, forKey: CKStadiumRecordKeys.name)
-            item.setValue(value.capacity, forKey: CKStadiumRecordKeys.capacity)
-            item.setValue(value.location, forKey: CKStadiumRecordKeys.city)
+            let uuidString = UUID().uuidString
+            let item = CKStadiumEntity(id: uuidString,
+                                       name: value.name,
+                                       capacity: value.capacity,
+                                       city: value.location,
+                                       index: value.index)
             itens.append(item)
         }
         return itens
