@@ -86,61 +86,46 @@ class MainViewController: UIViewController {
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { groups in
-                CKManager.shared.fetchTeams { teams in
-                    Task {
-                        let resultStadiums = await CKManager.shared.fetchStadiums()
-                        CKManager.shared.fetchTables { tables in
-                            self.setProgress(animated: false)
-                            self.createAlert(title: "Fetch All", message: """
+            Task {
+                let groups = await CKManager.shared.fetchGroups()
+                let teams = await CKManager.shared.fetchTeams()
+                let stadiums = await CKManager.shared.fetchStadiums()
+                let tables = await CKManager.shared.fetchTables()
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch All", message: """
                             Groups: \(groups.count)
                             Teams: \(teams.count)
-                            Stadiums (teams): \(teams.count)
+                            Stadiums: \(stadiums.count)
                             Tables: \(tables.count)
                             """)
-                        }
-                    }
-                }
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { groups in
-                print("Success fetchGroups")
+            Task {
+                let groups = await CKManager.shared.fetchGroups()
+                let teams = await CKManager.shared.fetchTeams()
+                let stadiums = await CKManager.shared.fetchStadiums()
+                let tables = await CKManager.shared.fetchTables()
+                
                 let groupIDS = groups.map({ $0.recordID! })
-                CKManager.shared.fetchTeams { teams in
-                    print("Success fetchTeams")
-                    let teamsIDS = teams.map({ $0.recordID! })
-                    Task {
-                        let stadiums = await CKManager.shared.fetchStadiums()
-                        
-                        print("Success fetchStadiums")
-                        let stadiumsIDS = stadiums.map({ $0.recordID! })
-                        CKManager.shared.fetchTables { tables in
-                            print("Success fetchTables")
-                            let tablesIDS = tables.map({ $0.recordID! })
-                            CKManager.shared.removeGroups(by: groupIDS) { boolGroups in
-                                print("Success removeGroups")
-                                CKManager.shared.removeTeams(by: teamsIDS) { boolTeams in
-                                    print("Success removeTeams")
-                                    CKManager.shared.removeStadiums(by: stadiumsIDS) { boolStadiums in
-                                        print("Success removeStadiums")
-                                        CKManager.shared.removeTables(by: tablesIDS) { boolTables in
-                                            print("Success removeTables")
-                                            self.setProgress(animated: false)
-                                            self.createAlert(title: "remove All", message: """
+                let teamsIDS = teams.map({ $0.recordID! })
+                let stadiumsIDS = stadiums.map({ $0.recordID! })
+                let tablesIDS = tables.map({ $0.recordID! })
+                
+                let boolGroups = await CKManager.shared.removeGroups(by: groupIDS)
+                let boolTeams = await CKManager.shared.removeGroups(by: teamsIDS)
+                let boolStadiums = await CKManager.shared.removeGroups(by: stadiumsIDS)
+                let boolTables = await CKManager.shared.removeGroups(by: tablesIDS)
+                
+                self.setProgress(animated: false)
+                self.createAlert(title: "remove All",
+                                 message: """
                                             Groups: \(boolGroups)
                                             Teams: \(boolTeams)
                                             Stadiums: \(boolStadiums)
                                             Tables: \(boolTables)
                                             """)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }))
         
@@ -166,19 +151,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchGroups()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Groups", message: "\(itens.count) groups")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { itens in
-                CKManager.shared.removeGroups(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeGroups", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchGroups()
+                let bool = await CKManager.shared.removeGroups(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeGroups", message: "\(bool)")
             }
         }))
         
@@ -204,19 +190,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTeams { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTeams()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Teams", message: "\(itens.count) teams")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTeams { itens in
-                CKManager.shared.removeTeams(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeTeams", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTeams()
+                let bool = await CKManager.shared.removeTeams(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeTeams", message: "\(bool)")
             }
         }))
         
@@ -250,19 +237,14 @@ class MainViewController: UIViewController {
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Stadiums", message: "\(itens.count) stadiums")
             }
-//            CKManager.shared.fetchStadiums { itens in
-//                self.setProgress(animated: false)
-//
-//            }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             Task {
                 self.setProgress(animated: true)
                 let itens = await CKManager.shared.fetchStadiums()
-                CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeStadiums", message: "\(bool)")
-                }
+                let bool = await CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeStadiums", message: "\(bool)")
             }
         }))
         buttom1.setTitle("🔼  Stad", for: .normal)
@@ -287,19 +269,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTables { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTables()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Tables", message: "\(itens.count) tables")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTables { itens in
-                CKManager.shared.removeTables(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeTables", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTables()
+                let bool = await CKManager.shared.removeTables(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeTables", message: "\(bool)")
             }
         }))
         

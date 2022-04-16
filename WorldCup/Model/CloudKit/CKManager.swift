@@ -65,9 +65,13 @@ final class CKManager {
         }
     }
     
-    func removeStadiums(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        CKStadium.removeAll(by: ids) { bool in
-            callback(bool)
+    func removeStadiums(by ids: [CKRecord.ID]) async -> Bool {
+        let result = await CKStadium.removeAll(by: ids)
+        switch result {
+        case .success(let bool):
+            return bool
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -79,22 +83,23 @@ final class CKManager {
         }
     }
     
-    func fetchTeams(callback: @escaping ([CKTeamsEntity]) -> Void) {
-        CKTeams.fetch { result in
-            switch result {
-            case .success(let itens):
-                DispatchQueue.main.async {
-                    callback(itens)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+    func fetchTeams() async -> [CKTeamsEntity] {
+        let result = await CKTeams.fetch()
+        switch result {
+        case .success(let itens):
+            return itens
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
-    func removeTeams(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        CKTeams.removeAll(by: ids) { bool in
-            callback(bool)
+    func removeTeams(by ids: [CKRecord.ID]) async -> Bool {
+        let result = await CKTeams.removeAll(by: ids)
+        switch result {
+        case .success(let bool):
+            return bool
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -106,22 +111,23 @@ final class CKManager {
         }
     }
     
-    func fetchGroups(callback: @escaping ([CKGroupsEntity]) -> Void) {
-        CKGroups.fetch { result in
-            switch result {
-            case .success(let itens):
-                DispatchQueue.main.async {
-                    callback(itens)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+    func fetchGroups() async -> [CKGroupsEntity] {
+        let result = await CKGroups.fetch()
+        switch result {
+        case .success(let itens):
+            return itens
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
-    func removeGroups(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        CKGroups.removeAll(by: ids) { bool in
-            callback(bool)
+    func removeGroups(by ids: [CKRecord.ID]) async -> Bool {
+        let result = await CKGroups.removeAll(by: ids)
+        switch result {
+        case .success(let bool):
+            return bool
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -133,31 +139,23 @@ final class CKManager {
         }
     }
     
-    func fetchTables(callback: @escaping ([CKTablesEntity]) -> Void) {
-        CKTables.fetch { result in
-            switch result {
-            case .success(let itens):
-                DispatchQueue.main.async {
-                    callback(itens)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+    func fetchTables() async -> [CKTablesEntity] {
+        let result = await CKTables.fetch()
+        switch result {
+        case .success(let itens):
+            return itens
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
-    func removeTables(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        CKTables.removeAll(by: ids) { bool in
-            callback(bool)
-        }
-    }
-    
-    // MARK: - Players
-    
-    private func publishPlayers(callback: @escaping (Result<String, WCError>) -> Void) {
-        let itens = [CKRecord]()
-        CKPlayers.publish(players: itens) { result in
-            callback(result)
+    func removeTables(by ids: [CKRecord.ID]) async -> Bool {
+        let result = await CKTables.removeAll(by: ids)
+        switch result {
+        case .success(let bool):
+            return bool
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -167,6 +165,26 @@ final class CKManager {
         let itens = [CKRecord]()
         CKMatches.publish(matches: itens) { result in
             callback(result)
+        }
+    }
+    
+    func fetchMatches() async -> [CKMatchesEntity] {
+        let result = await CKMatches.fetch()
+        switch result {
+        case .success(let itens):
+            return itens
+        case .failure(let error):
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    func removeMatches(by ids: [CKRecord.ID]) async -> Bool {
+        let result = await CKMatches.removeAll(by: ids)
+        switch result {
+        case .success(let bool):
+            return bool
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
 }
@@ -186,7 +204,6 @@ extension CKManager {
                 item.setValue(value.index, forKey: CKStadiumRecordKeys.index)
                 itens.append(item)
             }
-        case let (array as [CKPlayersEntity]) as Any:   print("CKPlayersEntity: \(array)")
         case let (array as [CKTeamsEntity]) as Any:     print("CKTeamsEntity: \(array)")
         case let (array as [CKTablesEntity]) as Any:    print("CKTablesEntity: \(array)")
         case let (array as [CKMatchesEntity]) as Any:   print("CKMatchesEntity: \(array)")

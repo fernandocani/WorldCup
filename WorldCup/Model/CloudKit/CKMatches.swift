@@ -46,51 +46,75 @@ class CKMatches {
         database.add(saveOperation)
     }
     
-    class func fetch(callback: @escaping (Result<[CKMatchesEntity], WCError>) -> Void) {
+    class func fetch() async -> Result<[CKMatchesEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
         let query = CKQuery(recordType: RecordTypes.matches, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKMatchesEntity]()
         print("fetching...")
         if #available(iOS 15.0, *) {
-            operation.recordMatchedBlock = { (recordId, result) in
-                switch result {
-                case let .success(record):
-                    //print(record)
-                    var item = CKMatchesEntity()
-                    item.recordID   = record.recordID
-                    item.id         = record[CKMatchesRecordKeys.id] as! String
-                    item.teamAwayID = record[CKMatchesRecordKeys.teamAwayID] as! String
-                    item.teamHomeID = record[CKMatchesRecordKeys.teamHomeID] as! String
-                    item.stadiumID  = record[CKMatchesRecordKeys.stadiumID] as! String
-                    item.date       = record[CKMatchesRecordKeys.date] as! Date
-                    item.goalsAway  = record[CKMatchesRecordKeys.goalsAway] as! Int
-                    item.goalsHome  = record[CKMatchesRecordKeys.goalsHome] as! Int
-                    item.type       = record[CKMatchesRecordKeys.type] as! String
-                    temp.append(item)
-                case let .failure(error):
-                    // if a single record failed to get fetched, you would see why here.
-                    print("something went wrong recordMatchedBlock \(error.localizedDescription)")
-                }
-            }
-            operation.queryResultBlock = { result in
-                //print("CKStad queryCompletionBlock: Jobs done!")
-                switch result {
-                case .success(_):
-                    //print("the query was successful")
-                    DispatchQueue.main.async {
-                        callback(.success(temp))
+            let itens: [CKMatchesEntity] = await withCheckedContinuation { continuation in
+                var temp = [CKMatchesEntity]()
+                operation.recordMatchedBlock = { (recordId, result) in
+                    switch result {
+                    case let .success(record):
+                        //print(record)
+                        var item = CKMatchesEntity()
+                        item.recordID   = record.recordID
+                        item.id         = record[CKMatchesRecordKeys.id] as! String
+                        item.teamAwayID = record[CKMatchesRecordKeys.teamAwayID] as! String
+                        item.teamHomeID = record[CKMatchesRecordKeys.teamHomeID] as! String
+                        item.stadiumID  = record[CKMatchesRecordKeys.stadiumID] as! String
+                        item.date       = record[CKMatchesRecordKeys.date] as! Date
+                        item.goalsAway  = record[CKMatchesRecordKeys.goalsAway] as! Int
+                        item.goalsHome  = record[CKMatchesRecordKeys.goalsHome] as! Int
+                        item.type       = record[CKMatchesRecordKeys.type] as! String
+                        temp.append(item)
+                    case let .failure(error):
+                        // if a single record failed to get fetched, you would see why here.
+                        print("something went wrong recordMatchedBlock \(error.localizedDescription)")
                     }
-                case let .failure(error):
-                    print("Something went wrong queryResultBlock \(error.localizedDescription)")
                 }
+                operation.queryResultBlock = { result in
+                    //print("CKStad queryCompletionBlock: Jobs done!")
+                    switch result {
+                    case .success(_):
+                        print("the query was successful")
+                    case let .failure(error):
+                        print("Something went wrong queryResultBlock \(error.localizedDescription)")
+                    }
+                    continuation.resume(returning: temp)
+                }
+                database.add(operation)
             }
-            database.add(operation)
+            return .success(itens)
         } else {
-            callback(.failure(.ParseFailed))
+            return .failure(.ParseFailed)
         }
     }
+    
+    class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {
+        print("removing...")
+        if #available(iOS 15.0, *) {
+            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+                let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
+                                                             recordIDsToDelete: ids)
+                saveOperation.modifyRecordsResultBlock = { result in
+                    continuation.resume(returning: result)
+                }
+                database.add(saveOperation)
+            }
+            switch result {
+            case .success(_):
+                return .success(true)
+            case .failure(_):
+                return .failure(.ParseFailed)
+            }
+        } else {
+            return .failure(.ParseFailed)
+        }
+    }
+    
 }
 
 struct CKMatchesEntity: Identifiable {
@@ -207,7 +231,7 @@ enum MatchesConstructor {
         case .match30: return "H4"
         case .match31: return "G1"
         case .match32: return "H1"
-        
+            
         case .match33: return "B4"
         case .match34: return "B2"
         case .match35: return "A2"
@@ -224,7 +248,7 @@ enum MatchesConstructor {
         case .match46: return "H4"
         case .match47: return "G2"
         case .match48: return "G4"
-
+            
         case .match49: return "1stA"
         case .match50: return "1stC"
         case .match51: return "1stB"
@@ -233,15 +257,15 @@ enum MatchesConstructor {
         case .match54: return "1stG"
         case .match55: return "1stF"
         case .match56: return "1stH"
-        
+            
         case .match57: return "W49"
         case .match58: return "W53"
         case .match59: return "W51"
         case .match60: return "W55"
-        
+            
         case .match61: return "W57"
         case .match62: return "W59"
-        
+            
         case .match63: return "L61"
             
         case .match64: return "W61"
@@ -283,7 +307,7 @@ enum MatchesConstructor {
         case .match30: return "H2"
         case .match31: return "G3"
         case .match32: return "H3"
-        
+            
         case .match33: return "B1"
         case .match34: return "B3"
         case .match35: return "A3"
@@ -300,7 +324,7 @@ enum MatchesConstructor {
         case .match46: return "H1"
         case .match47: return "G3"
         case .match48: return "G1"
-
+            
         case .match49: return "2stB"
         case .match50: return "2stD"
         case .match51: return "2stA"
@@ -309,15 +333,15 @@ enum MatchesConstructor {
         case .match54: return "2stH"
         case .match55: return "2stE"
         case .match56: return "2stG"
-        
+            
         case .match57: return "W50"
         case .match58: return "W54"
         case .match59: return "W52"
         case .match60: return "W56"
-        
+            
         case .match61: return "W58"
         case .match62: return "W60"
-        
+            
         case .match63: return "L62"
             
         case .match64: return "W62"
@@ -359,7 +383,7 @@ enum MatchesConstructor {
         case .match30: return 7
         case .match31: return 6
         case .match32: return 5
-        
+            
         case .match33: return 4
         case .match34: return 3
         case .match35: return 2
@@ -376,7 +400,7 @@ enum MatchesConstructor {
         case .match46: return 7
         case .match47: return 6
         case .match48: return 5
-
+            
         case .match49: return 2
         case .match50: return 4
         case .match51: return 1
@@ -385,15 +409,15 @@ enum MatchesConstructor {
         case .match54: return 6
         case .match55: return 7
         case .match56: return 5
-        
+            
         case .match57: return 5
         case .match58: return 7
         case .match59: return 1
         case .match60: return 3
-        
+            
         case .match61: return 5
         case .match62: return 1
-        
+            
         case .match63: return 2
             
         case .match64: return 5
@@ -435,7 +459,7 @@ enum MatchesConstructor {
         case .match30: return "28/11/2022 16:00"
         case .match31: return "28/11/2022 19:00"
         case .match32: return "28/11/2022 22:00"
-        
+            
         case .match33: return "29/11/2022 22:00"
         case .match34: return "29/11/2022 22:00"
         case .match35: return "29/11/2022 18:00"
@@ -452,7 +476,7 @@ enum MatchesConstructor {
         case .match46: return "02/12/2022 18:00"
         case .match47: return "02/12/2022 22:00"
         case .match48: return "02/12/2022 22:00"
-        //round of 16
+            //round of 16
         case .match49: return "03/12/2022 18:00"
         case .match50: return "03/12/2022 22:00"
         case .match51: return "04/12/2022 22:00"
@@ -461,17 +485,17 @@ enum MatchesConstructor {
         case .match54: return "05/12/2022 22:00"
         case .match55: return "06/12/2022 18:00"
         case .match56: return "06/12/2022 22:00"
-        //round of 8
+            //round of 8
         case .match57: return "09/12/2022 22:00"
         case .match58: return "09/12/2022 18:00"
         case .match59: return "10/12/2022 22:00"
         case .match60: return "10/12/2022 18:00"
-        //semifinals
+            //semifinals
         case .match61: return "13/12/2022 22:00"
         case .match62: return "14/12/2022 22:00"
-        //3rd place
+            //3rd place
         case .match63: return "17/12/2022 18:00"
-        //final
+            //final
         case .match64: return "18/12/2022 18:00"
         }
     }
