@@ -55,16 +55,13 @@ final class CKManager {
         }
     }
     
-    func fetchStadiums(callback: @escaping ([CKStadiumEntity]) -> Void) {
-        CKStadium.fetch { result in
-            switch result {
-            case .success(let itens):
-                DispatchQueue.main.async {
-                    callback(itens)
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+    func fetchStadiums() async -> [CKStadiumEntity] {
+        let result = await CKStadium.fetch()
+        switch result {
+        case .success(let itens):
+            return itens
+        case .failure(let error):
+            fatalError(error.localizedDescription)
         }
     }
     

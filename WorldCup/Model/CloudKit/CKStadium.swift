@@ -46,45 +46,50 @@ class CKStadium {
         database.add(saveOperation)
     }
     
-    class func fetch(callback: @escaping (Result<[CKStadiumEntity], WCError>) -> Void) {
+    class func fetch() async -> Result<[CKStadiumEntity], WCError> {
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: RecordTypes.stadiums, predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        var temp = [CKStadiumEntity]()
         print("fetching...")
         if #available(iOS 15.0, *) {
-            operation.recordMatchedBlock = { (recordId, result) in
-                switch result {
-                case let .success(record):
-                    //print(record)
-                    var item = CKStadiumEntity()
-                    item.recordID   = record.recordID
-                    item.id         = record[CKStadiumRecordKeys.id] as! String
-                    item.name       = record[CKStadiumRecordKeys.name] as! String
-                    item.city       = record[CKStadiumRecordKeys.city] as! String
-                    item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
-                    //item.index      = record[CKStadiumRecordKeys.index] as! Int
-                    temp.append(item)
-                case let .failure(error):
-                    // if a single record failed to get fetched, you would see why here.
-                    print("something went wrong recordMatchedBlock \(error.localizedDescription)")
-                }
-            }
-            operation.queryResultBlock = { result in
-                //print("CKStad queryCompletionBlock: Jobs done!")
-                switch result {
-                case .success(_):
-                    //print("the query was successful \(String(describing: cursor))")
-                    DispatchQueue.main.async {
-                        callback(.success(temp))
+            let itens: [CKStadiumEntity] = await withCheckedContinuation { continuation in
+                var temp = [CKStadiumEntity]()
+                let operation = CKQueryOperation(query: query)
+                operation.recordMatchedBlock = { (recordId, result) in
+                    switch result {
+                    case let .success(record):
+                        //print(record)
+                        var item = CKStadiumEntity()
+                        item.recordID   = record.recordID
+                        item.id         = record[CKStadiumRecordKeys.id] as! String
+                        item.name       = record[CKStadiumRecordKeys.name] as! String
+                        item.city       = record[CKStadiumRecordKeys.city] as! String
+                        item.capacity   = record[CKStadiumRecordKeys.capacity] as! Int
+                        item.index      = record[CKStadiumRecordKeys.index] as! Int
+                        temp.append(item)
+                    case let .failure(error):
+                        // if a single record failed to get fetched, you would see why here.
+                        print("something went wrong recordMatchedBlock \(error.localizedDescription)")
                     }
-                case let .failure(error):
-                    print("Something went wrong queryResultBlock \(error.localizedDescription)")
                 }
+                operation.queryResultBlock = { result in
+                    //print("CKStad queryCompletionBlock: Jobs done!")
+                    switch result {
+                    case .success(_):
+                        print("the query was successful")
+                        //DispatchQueue.main.async {
+                        //    callback(.success(temp))
+                        //    return .success(temp)
+                        //}
+                    case let .failure(error):
+                        print("Something went wrong queryResultBlock \(error.localizedDescription)")
+                    }
+                    continuation.resume(returning: temp)
+                }
+                database.add(operation)
             }
-            database.add(operation)
+            return .success(itens)
         } else {
-            callback(.failure(.ParseFailed))
+            return .failure(.ParseFailed)
         }
     }
     

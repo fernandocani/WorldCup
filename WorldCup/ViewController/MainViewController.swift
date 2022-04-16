@@ -88,13 +88,14 @@ class MainViewController: UIViewController {
             self.setProgress(animated: true)
             CKManager.shared.fetchGroups { groups in
                 CKManager.shared.fetchTeams { teams in
-                    CKManager.shared.fetchStadiums { stadiums in
+                    Task {
+                        let resultStadiums = await CKManager.shared.fetchStadiums()
                         CKManager.shared.fetchTables { tables in
                             self.setProgress(animated: false)
                             self.createAlert(title: "Fetch All", message: """
                             Groups: \(groups.count)
                             Teams: \(teams.count)
-                            Stadiums: \(stadiums.count)
+                            Stadiums (teams): \(teams.count)
                             Tables: \(tables.count)
                             """)
                         }
@@ -110,7 +111,9 @@ class MainViewController: UIViewController {
                 CKManager.shared.fetchTeams { teams in
                     print("Success fetchTeams")
                     let teamsIDS = teams.map({ $0.recordID! })
-                    CKManager.shared.fetchStadiums { stadiums in
+                    Task {
+                        let stadiums = await CKManager.shared.fetchStadiums()
+                        
                         print("Success fetchStadiums")
                         let stadiumsIDS = stadiums.map({ $0.recordID! })
                         CKManager.shared.fetchTables { tables in
@@ -241,15 +244,21 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchStadiums { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchStadiums()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Stadiums", message: "\(itens.count) stadiums")
             }
+//            CKManager.shared.fetchStadiums { itens in
+//                self.setProgress(animated: false)
+//
+//            }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchStadiums { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchStadiums()
                 CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! })) { bool in
                     self.setProgress(animated: false)
                     self.createAlert(title: "removeStadiums", message: "\(bool)")

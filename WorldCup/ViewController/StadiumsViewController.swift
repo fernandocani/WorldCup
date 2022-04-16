@@ -31,16 +31,21 @@ class StadiumsViewController: UIViewController {
     func fetch(cloud: Bool) {
         if cloud {
             if #available(iOS 15.0, *) {
-                CKStadium.fetch { result in
-                    switch result {
-                    case .success(let itens):
-                        for item in itens {
-                            print(item)
-                        }
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
+                Task {
+                    let itens = await CKStadium.fetch()
+                    print(itens)
                 }
+                
+//                CKStadium.fetch { result in
+//                    switch result {
+//                    case .success(let itens):
+//                        for item in itens {
+//                            print(item)
+//                        }
+//                    case .failure(let error):
+//                        print(error.localizedDescription)
+//                    }
+//                }
             }
         } else {
             self.viewModel.fetchData()
