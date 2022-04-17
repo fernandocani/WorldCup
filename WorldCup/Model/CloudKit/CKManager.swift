@@ -312,7 +312,7 @@ extension CKManager {
             let uuidString = UUID().uuidString
             let item = CKTeamsEntity(id: uuidString,
                                      name: value.name,
-                                     flag: "flag",
+                                     flag: value.flag,
                                      groupID: "\(value.groupID)",
                                      groupPosition: value.groupPosition,
                                      rank: value.fifaRank,
@@ -429,85 +429,4 @@ extension CKManager {
         return recordIndex
     }
 
-}
-/*
- (lldb) po stadiums.first!
- ▿ CKStadiumEntity
-   - id : "3F68FF4F-B3E8-41E1-A535-C4D0921FDA00"
-   ▿ recordID : Optional<CKRecordID>
-     - some : <CKRecordID: 0x2816bffe0; recordName=3F68FF4F-B3E8-41E1-A535-C4D0921FDA00, zoneID=_defaultZone:__defaultOwner__>
-   - name : "Al Bayt Stadium"
-   - capacity : 60000
-   - city : "Al Khor"
-   - index : 1
-
- (lldb) po groups.first!
- ▿ CKGroupsEntity
-   - id : "1E221E11-418B-434A-B9F7-52C74B244374"
-   ▿ recordID : Optional<CKRecordID>
-     - some : <CKRecordID: 0x2816bff00; recordName=1E221E11-418B-434A-B9F7-52C74B244374, zoneID=_defaultZone:__defaultOwner__>
-   - name : "A"
-   - index : 1
-
- (lldb) po teams.first!
- ▿ CKTeamsEntity
-   - id : "A491757C-EBB5-4802-B350-5BB6107A9505"
-   ▿ recordID : Optional<CKRecordID>
-     - some : <CKRecordID: 0x2816aaa60; recordName=A491757C-EBB5-4802-B350-5BB6107A9505, zoneID=_defaultZone:__defaultOwner__>
-   - name : "Argentina"
-   - flag : "flag"
-   - groupID : "AFB80E86-319F-4069-9242-7A3E01C852C9"
-   - groupPosition : 1
-   - rank : 4
-   - tableID : "2C7DF3A2-2270-4884-B8C9-C8A731EE98D5"
-
- (lldb) po tables.first!
- ▿ CKTablesEntity
-   - id : "2C7DF3A2-2270-4884-B8C9-C8A731EE98D5"
-   ▿ recordID : Optional<CKRecordID>
-     - some : <CKRecordID: 0x2816ed2e0; recordName=2C7DF3A2-2270-4884-B8C9-C8A731EE98D5, zoneID=_defaultZone:__defaultOwner__>
-   - teamID : "A491757C-EBB5-4802-B350-5BB6107A9505"
-   - points : 0
-   - played : 0
-   - won : 0
-   - lost : 0
-   - draw : 0
-   - goalsAgainst : 0
-   - goalsFor : 0
-   - goalsDifference : 0
-
-(lldb) po matchesEntity.first!
-▿ CKMatchesEntity
-  - id : "486C59DA-58EA-4846-8167-A57C8E733537"
-  ▿ recordID : Optional<CKRecordID>
-    - some : <CKRecordID: 0x2814bfee0; recordName=486C59DA-58EA-4846-8167-A57C8E733537, zoneID=_defaultZone:__defaultOwner__>
-  - index : 1
-  - teamHomeID : "teamHomeID"
-  - teamAwayID : "teamAwayID"
-  - stadiumID : "stadiumID"
-  ▿ date : 2022-11-21 4:00:00 PM +0000
-    - timeIntervalSinceReferenceDate : 690739200.0
-  - goalsAway : 0
-  - goalsHome : 0
-  - type : "type"
-
-(lldb)
-*/
-
-extension Int {
-    
-    func getGroupID() -> String? {
-        switch self {
-        case 1: return "A"
-        case 2: return "B"
-        case 3: return "C"
-        case 4: return "D"
-        case 5: return "E"
-        case 6: return "F"
-        case 7: return "G"
-        case 8: return "H"
-        default: return nil
-        }
-    }
-    
 }

@@ -19,6 +19,7 @@ extension CKManager {
     enum EnumCountries: CaseIterable {
         //https://www.fifa.com/fifa-world-ranking
         //https://www.fifa.com/tournaments/mens/worldcup/qatar2022
+        //https://flagicons.lipis.dev
         case argentina
         case belgium
         case brazil
@@ -27,7 +28,7 @@ extension CKManager {
         case croatia
         case denmark
         case ecuador
-        case englad
+        case england
         case france
         case germany
         case ghana
@@ -70,7 +71,7 @@ extension CKManager {
             case .croatia:      return "Croatia"
             case .denmark:      return "Denmark"
             case .ecuador:      return "Ecuador"
-            case .englad:       return "England"
+            case .england:      return "England"
             case .france:       return "France"
             case .germany:      return "Germany"
             case .ghana:        return "Ghana"
@@ -115,7 +116,7 @@ extension CKManager {
             case .croatia:      return 16
             case .denmark:      return 11
             case .ecuador:      return 46
-            case .englad:       return 5
+            case .england:      return 5
             case .france:       return 3
             case .germany:      return 12
             case .ghana:        return 60
@@ -157,7 +158,7 @@ extension CKManager {
             case .senegal:      return 3
             case .netherlands:  return 4
                 
-            case .englad:       return 1
+            case .england:      return 1
             case .iran:         return 2
             case .usa:          return 3
             case .EUR:          return 4
@@ -203,7 +204,7 @@ extension CKManager {
             case .senegal:      return 1
             case .netherlands:  return 1
                 
-            case .englad:       return 2
+            case .england:      return 2
             case .iran:         return 2
             case .usa:          return 2
             case .EUR:          return 2
@@ -239,6 +240,51 @@ extension CKManager {
             case .korea:        return 8
                 
             default:            return 99
+            }
+        }
+        
+        var flag: String {
+            switch self {
+            case .argentina:    return "ar"
+            case .belgium:      return "be"
+            case .brazil:       return "br"
+            case .canada:       return "ca"
+            case .cameroon:     return "cm"
+            case .croatia:      return "hr"
+            case .denmark:      return "dk"
+            case .ecuador:      return "ec"
+            case .england:      return "gb-eng"
+            case .france:       return "fr"
+            case .germany:      return "de"
+            case .ghana:        return "gh"
+            case .iran:         return "ir"
+            case .japan:        return "jp"
+            case .korea:        return "kr"
+            case .morocco:      return "ma"
+            case .mexico:       return "mx"
+            case .netherlands:  return "nl"
+            case .poland:       return "pl"
+            case .portugal:     return "pt"
+            case .qatar:        return "qa"
+            case .saudiArabia:  return "sa"
+            case .spain:        return "es"
+            case .senegal:      return "sn"
+            case .serbia:       return "rs"
+            case .switzerland:  return "ch"
+            case .tunisia:      return "tn"
+            case .usa:          return "us"
+            case .uruguai:      return "uy"
+            case .EUR:          return "tbd"
+            case .PL1:          return "tbd"
+            case .PL2:          return "tbd"
+            case .wales:        return "gb-wls"
+            case .scotland:     return "gb-sct"
+            case .ukraine:      return "ua"
+            case .peru:         return "pe"
+            case .australia:    return "au"
+            case .arabEmirates: return "ae"
+            case .costaRica:    return "cr"
+            case .newZeland:    return "nz"
             }
         }
         
