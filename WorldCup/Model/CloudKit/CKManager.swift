@@ -195,6 +195,68 @@ final class CKManager {
         }
     }
     
+    func updateMatch(original: CKMatchesEntity,
+                     id: String? = nil,
+                     index: Int? = nil,
+                     teamHomeID: String? = nil,
+                     teamAwayID: String? = nil,
+                     stadiumID: String? = nil,
+                     date: Date? = nil,
+                     goalsAway: Int? = nil,
+                     goalsHome: Int? = nil,
+                     type: String? = nil) async -> Result<[CKRecord], WCError> {
+        var changed = false
+        
+        let record = CKRecord(recordType: RecordTypes.matches, recordID: CKRecord.ID(recordName: original.id))
+        if let id = id, id != original.id {
+            changed = true
+            record.setValue(id,             forKey: CKMatchesRecordKeys.id)
+        }
+        if let index = index, index != original.index {
+            changed = true
+            record.setValue(index,          forKey: CKMatchesRecordKeys.index)
+        }
+        if let teamHomeID = teamHomeID, teamHomeID != original.teamHomeID {
+            changed = true
+            record.setValue(teamHomeID,     forKey: CKMatchesRecordKeys.teamHomeID)
+        }
+        if let teamAwayID = teamAwayID, teamAwayID != original.teamAwayID {
+            changed = true
+            record.setValue(teamAwayID,     forKey: CKMatchesRecordKeys.teamAwayID)
+        }
+        if let stadiumID = stadiumID, stadiumID != original.stadiumID {
+            changed = true
+            record.setValue(stadiumID,      forKey: CKMatchesRecordKeys.stadiumID)
+        }
+        if let date = date, date != original.date {
+            changed = true
+            record.setValue(date,           forKey: CKMatchesRecordKeys.date)
+        }
+        if let goalsAway = goalsAway, goalsAway != original.goalsAway {
+            changed = true
+            record.setValue(goalsAway,      forKey: CKMatchesRecordKeys.goalsAway)
+        }
+        if let goalsHome = goalsHome, goalsHome != original.goalsHome {
+            changed = true
+            record.setValue(goalsHome,      forKey: CKMatchesRecordKeys.goalsHome)
+        }
+        if let type = type, type != original.type {
+            changed = true
+            record.setValue(type,           forKey: CKMatchesRecordKeys.type)
+        }
+        if changed {
+            let result = await CKMatches.update(by: [record])
+            switch result {
+            case .success(let records):
+                return .success(records)
+            case .failure(let error):
+                fatalError(error.localizedDescription)
+            }
+        } else {
+            return .failure(WCError.ParseFailed)
+        }
+    }
+    
     func removeMatches(by ids: [CKRecord.ID]) async -> Bool {
         let result = await CKMatches.removeAll(by: ids)
         switch result {
@@ -208,7 +270,7 @@ final class CKManager {
 
 extension CKManager {
     
-    private func convertEntityToCK(originals: [Any]) -> [CKRecord] {
+    func convertEntityToCK(originals: [Any]) -> [CKRecord] {
         var itens = [CKRecord]()
         switch originals {
         case let (array as [CKStadiumEntity]) as Any:

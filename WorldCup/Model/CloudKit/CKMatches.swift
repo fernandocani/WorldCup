@@ -22,6 +22,7 @@ enum CKMatchesRecordKeys {
 
 class CKMatches {
     
+    ///CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
     class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
@@ -82,6 +83,25 @@ class CKMatches {
             database.add(operation)
         }
         return .success(itens)
+    }
+    
+    class func update(by records: [CKRecord]) async -> Result<[CKRecord], WCError> {
+        print("updating...")
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: records,
+                                                         recordIDsToDelete: nil)
+            saveOperation.savePolicy = .changedKeys
+            saveOperation.modifyRecordsResultBlock = { result in
+                continuation.resume(returning: result)
+            }
+            database.add(saveOperation)
+        }
+        switch result {
+        case .success(_):
+            return .success(records)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
     class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {

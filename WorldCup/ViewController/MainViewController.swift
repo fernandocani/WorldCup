@@ -301,9 +301,25 @@ class MainViewController: UIViewController {
         stackView1.distribution = .fillEqually
         
         let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            //CKManager.shared.publishStadiums() { result in
-            //
-            //}
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchMatches()
+                if let first = itens.first(where: { $0.type == "final" }) {
+                    let result = await CKManager.shared.updateMatch(original: first,
+                                                                            teamHomeID: "W61",
+                                                                            teamAwayID: "W62")
+                    self.setProgress(animated: false)
+                    switch result {
+                    case .success(let records):
+                        self.createAlert(title: "updateMatches", message: "\(records)")
+                    case .failure(_):
+                        self.createAlert(title: "updateMatches", message: "no values to update")
+                    }
+                } else {
+                    self.setProgress(animated: false)
+                    self.createAlert(title: "fail to update", message: "\(false)")
+                }
+            }
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             Task {
@@ -326,7 +342,7 @@ class MainViewController: UIViewController {
         buttom1.setTitle("🔼  Matches", for: .normal)
         buttom2.setTitle("⏬  Matches", for: .normal)
         buttom3.setTitle("❌  Matches", for: .normal)
-        //stackView1.addArrangedSubview(buttom1)
+        stackView1.addArrangedSubview(buttom1)
         stackView1.addArrangedSubview(buttom2)
         stackView1.addArrangedSubview(buttom3)
         return stackView1
