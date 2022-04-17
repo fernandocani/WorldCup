@@ -306,8 +306,8 @@ class MainViewController: UIViewController {
                 let itens = await CKManager.shared.fetchMatches()
                 if let first = itens.first(where: { $0.type == "final" }) {
                     let result = await CKManager.shared.updateMatch(original: first,
-                                                                            teamHomeID: "W61",
-                                                                            teamAwayID: "W62")
+                                                                    teamHomeID: "W61",
+                                                                    teamAwayID: "W62")
                     self.setProgress(animated: false)
                     switch result {
                     case .success(let records):
