@@ -54,18 +54,17 @@ class MainViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = itemNewCode
     }
     
+    // MARK: - Additional Buttons
+    
     private func setupAddtitionalButtons() {
-        if #available(iOS 15.0, *) {
-            self.stackView.addArrangedSubview(stackViewAll())
-            self.stackView.addArrangedSubview(stackViewGroups())
-            self.stackView.addArrangedSubview(stackViewTeams())
-            self.stackView.addArrangedSubview(stackViewStadiums())
-            self.stackView.addArrangedSubview(stackViewTables())
-            self.stackView.addArrangedSubview(stackViewMatches())
-        }
+        self.stackView.addArrangedSubview(stackViewAll())
+        self.stackView.addArrangedSubview(stackViewGroups())
+        self.stackView.addArrangedSubview(stackViewTeams())
+        self.stackView.addArrangedSubview(stackViewStadiums())
+        self.stackView.addArrangedSubview(stackViewTables())
+        self.stackView.addArrangedSubview(stackViewMatches())
     }
     
-    @available(iOS 15.0, *)
     func stackViewAll() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -147,7 +146,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewGroups() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -186,7 +184,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewTeams() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -225,7 +222,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewStadiums() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -265,7 +261,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewTables() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -304,7 +299,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewMatches() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4

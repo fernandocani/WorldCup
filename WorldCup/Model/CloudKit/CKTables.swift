@@ -26,22 +26,18 @@ class CKTables {
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
     class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
-        if #available(iOS 15.0, *) {
-            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
-                let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
-                                                             recordIDsToDelete: nil)
-                saveOperation.modifyRecordsResultBlock = { result in
-                    continuation.resume(returning: result)
-                }
-                database.add(saveOperation)
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                         recordIDsToDelete: nil)
+            saveOperation.modifyRecordsResultBlock = { result in
+                continuation.resume(returning: result)
             }
-            switch result {
-            case .success(_):
-                return .success(true)
-            case .failure(_):
-                return .failure(.ParseFailed)
-            }
-        } else {
+            database.add(saveOperation)
+        }
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
             return .failure(.ParseFailed)
         }
     }
@@ -52,67 +48,59 @@ class CKTables {
         let query = CKQuery(recordType: RecordTypes.tables, predicate: predicate)
         let operation = CKQueryOperation(query: query)
         print("fetching...")
-        if #available(iOS 15.0, *) {
-            let itens: [CKTablesEntity] = await withCheckedContinuation { continuation in
-                var temp = [CKTablesEntity]()
-                operation.recordMatchedBlock = { (recordId, result) in
-                    switch result {
-                    case let .success(record):
-                        //print(record)
-                        var item = CKTablesEntity()
-                        item.recordID        = record.recordID
-                        item.id              = record[CKTablesRecordKeys.id] as! String
-                        item.draw            = record[CKTablesRecordKeys.draw] as! Int
-                        item.goalsAgainst    = record[CKTablesRecordKeys.goalsAgainst] as! Int
-                        item.goalsDifference = record[CKTablesRecordKeys.goalsDifference] as! Int
-                        item.goalsFor        = record[CKTablesRecordKeys.goalsFor] as! Int
-                        item.lost            = record[CKTablesRecordKeys.lost] as! Int
-                        item.played          = record[CKTablesRecordKeys.played] as! Int
-                        item.points          = record[CKTablesRecordKeys.points] as! Int
-                        item.teamID          = record[CKTablesRecordKeys.teamID] as! String
-                        item.won             = record[CKTablesRecordKeys.won] as! Int
-                        temp.append(item)
-                    case let .failure(error):
-                        // if a single record failed to get fetched, you would see why here.
-                        print("something went wrong recordMatchedBlock \(error.localizedDescription)")
-                    }
+        let itens: [CKTablesEntity] = await withCheckedContinuation { continuation in
+            var temp = [CKTablesEntity]()
+            operation.recordMatchedBlock = { (recordId, result) in
+                switch result {
+                case let .success(record):
+                    //print(record)
+                    var item = CKTablesEntity()
+                    item.recordID        = record.recordID
+                    item.id              = record[CKTablesRecordKeys.id] as! String
+                    item.draw            = record[CKTablesRecordKeys.draw] as! Int
+                    item.goalsAgainst    = record[CKTablesRecordKeys.goalsAgainst] as! Int
+                    item.goalsDifference = record[CKTablesRecordKeys.goalsDifference] as! Int
+                    item.goalsFor        = record[CKTablesRecordKeys.goalsFor] as! Int
+                    item.lost            = record[CKTablesRecordKeys.lost] as! Int
+                    item.played          = record[CKTablesRecordKeys.played] as! Int
+                    item.points          = record[CKTablesRecordKeys.points] as! Int
+                    item.teamID          = record[CKTablesRecordKeys.teamID] as! String
+                    item.won             = record[CKTablesRecordKeys.won] as! Int
+                    temp.append(item)
+                case let .failure(error):
+                    // if a single record failed to get fetched, you would see why here.
+                    print("something went wrong recordMatchedBlock \(error.localizedDescription)")
                 }
-                operation.queryResultBlock = { result in
-                    //print("CKStad queryCompletionBlock: Jobs done!")
-                    switch result {
-                    case .success(_):
-                        print("the query was successful")
-                    case let .failure(error):
-                        print("Something went wrong queryResultBlock \(error.localizedDescription)")
-                    }
-                    continuation.resume(returning: temp)
-                }
-                database.add(operation)
             }
-            return .success(itens)
-        } else {
-            return .failure(.ParseFailed)
+            operation.queryResultBlock = { result in
+                //print("CKStad queryCompletionBlock: Jobs done!")
+                switch result {
+                case .success(_):
+                    print("the query was successful")
+                case let .failure(error):
+                    print("Something went wrong queryResultBlock \(error.localizedDescription)")
+                }
+                continuation.resume(returning: temp)
+            }
+            database.add(operation)
         }
+        return .success(itens)
     }
     
     class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {
         print("removing...")
-        if #available(iOS 15.0, *) {
-            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
-                let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
-                                                             recordIDsToDelete: ids)
-                saveOperation.modifyRecordsResultBlock = { result in
-                    continuation.resume(returning: result)
-                }
-                database.add(saveOperation)
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
+                                                         recordIDsToDelete: ids)
+            saveOperation.modifyRecordsResultBlock = { result in
+                continuation.resume(returning: result)
             }
-            switch result {
-            case .success(_):
-                return .success(true)
-            case .failure(_):
-                return .failure(.ParseFailed)
-            }
-        } else {
+            database.add(saveOperation)
+        }
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
             return .failure(.ParseFailed)
         }
     }
