@@ -25,25 +25,25 @@ class CKStadium {
     //static let database = CKContainer.default().publicCloudDatabase
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(stadiums: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: stadiums,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
         if #available(iOS 15.0, *) {
-            saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKStadium: \(#function) \(stadiums.count) stadiums"))
-                case .failure(let error):
-                    print(error.localizedDescription)
+            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+                let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                             recordIDsToDelete: nil)
+                saveOperation.modifyRecordsResultBlock = { result in
+                    continuation.resume(returning: result)
                 }
+                database.add(saveOperation)
+            }
+            switch result {
+            case .success(_):
+                return .success(true)
+            case .failure(_):
+                return .failure(.ParseFailed)
             }
         } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            return .failure(.ParseFailed)
         }
-        database.add(saveOperation)
     }
     
     class func fetch() async -> Result<[CKStadiumEntity], WCError> {

@@ -24,26 +24,25 @@ class CKMatches {
     
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(matches: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        fatalError("falta implementar")
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: matches,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
         if #available(iOS 15.0, *) {
-            saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKMatches: \(#function) \(matches.count) matches"))
-                case .failure(let error):
-                    print(error.localizedDescription)
+            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+                let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                             recordIDsToDelete: nil)
+                saveOperation.modifyRecordsResultBlock = { result in
+                    continuation.resume(returning: result)
                 }
+                database.add(saveOperation)
+            }
+            switch result {
+            case .success(_):
+                return .success(true)
+            case .failure(_):
+                return .failure(.ParseFailed)
             }
         } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            return .failure(.ParseFailed)
         }
-        database.add(saveOperation)
     }
     
     class func fetch() async -> Result<[CKMatchesEntity], WCError> {
@@ -130,7 +129,7 @@ struct CKMatchesEntity: Identifiable {
     var type: String = ""
 }
 
-enum MatchesConstructor {
+enum MatchesConstructor: CaseIterable {
     case match01
     case match02
     case match03
@@ -500,4 +499,164 @@ enum MatchesConstructor {
         }
     }
     
+    var index: Int {
+        switch self {
+        case .match01: return 01
+        case .match02: return 02
+        case .match03: return 03
+        case .match04: return 04
+        case .match05: return 05
+        case .match06: return 06
+        case .match07: return 07
+        case .match08: return 08
+        case .match09: return 09
+        case .match10: return 10
+        case .match11: return 11
+        case .match12: return 12
+        case .match13: return 13
+        case .match14: return 14
+        case .match15: return 15
+        case .match16: return 16
+            
+        case .match17: return 17
+        case .match18: return 18
+        case .match19: return 19
+        case .match20: return 20
+        case .match21: return 21
+        case .match22: return 22
+        case .match23: return 23
+        case .match24: return 24
+        case .match25: return 25
+        case .match26: return 26
+        case .match27: return 27
+        case .match28: return 28
+        case .match29: return 29
+        case .match30: return 30
+        case .match31: return 31
+        case .match32: return 32
+            
+        case .match33: return 33
+        case .match34: return 34
+        case .match35: return 35
+        case .match36: return 36
+        case .match37: return 37
+        case .match38: return 38
+        case .match39: return 39
+        case .match40: return 40
+        case .match41: return 41
+        case .match42: return 42
+        case .match43: return 43
+        case .match44: return 44
+        case .match45: return 45
+        case .match46: return 46
+        case .match47: return 47
+        case .match48: return 48
+            
+        case .match49: return 49
+        case .match50: return 50
+        case .match51: return 51
+        case .match52: return 52
+        case .match53: return 53
+        case .match54: return 54
+        case .match55: return 55
+        case .match56: return 56
+            
+        case .match57: return 57
+        case .match58: return 58
+        case .match59: return 59
+        case .match60: return 60
+            
+        case .match61: return 61
+        case .match62: return 62
+            
+        case .match63: return 63
+            
+        case .match64: return 64
+        }
+    }
+    
+    var type: String {
+        switch self {
+        case .match01: return MatchType.group.rawValue
+        case .match02: return MatchType.group.rawValue
+        case .match03: return MatchType.group.rawValue
+        case .match04: return MatchType.group.rawValue
+        case .match05: return MatchType.group.rawValue
+        case .match06: return MatchType.group.rawValue
+        case .match07: return MatchType.group.rawValue
+        case .match08: return MatchType.group.rawValue
+        case .match09: return MatchType.group.rawValue
+        case .match10: return MatchType.group.rawValue
+        case .match11: return MatchType.group.rawValue
+        case .match12: return MatchType.group.rawValue
+        case .match13: return MatchType.group.rawValue
+        case .match14: return MatchType.group.rawValue
+        case .match15: return MatchType.group.rawValue
+        case .match16: return MatchType.group.rawValue
+            
+        case .match17: return MatchType.group.rawValue
+        case .match18: return MatchType.group.rawValue
+        case .match19: return MatchType.group.rawValue
+        case .match20: return MatchType.group.rawValue
+        case .match21: return MatchType.group.rawValue
+        case .match22: return MatchType.group.rawValue
+        case .match23: return MatchType.group.rawValue
+        case .match24: return MatchType.group.rawValue
+        case .match25: return MatchType.group.rawValue
+        case .match26: return MatchType.group.rawValue
+        case .match27: return MatchType.group.rawValue
+        case .match28: return MatchType.group.rawValue
+        case .match29: return MatchType.group.rawValue
+        case .match30: return MatchType.group.rawValue
+        case .match31: return MatchType.group.rawValue
+        case .match32: return MatchType.group.rawValue
+            
+        case .match33: return MatchType.group.rawValue
+        case .match34: return MatchType.group.rawValue
+        case .match35: return MatchType.group.rawValue
+        case .match36: return MatchType.group.rawValue
+        case .match37: return MatchType.group.rawValue
+        case .match38: return MatchType.group.rawValue
+        case .match39: return MatchType.group.rawValue
+        case .match40: return MatchType.group.rawValue
+        case .match41: return MatchType.group.rawValue
+        case .match42: return MatchType.group.rawValue
+        case .match43: return MatchType.group.rawValue
+        case .match44: return MatchType.group.rawValue
+        case .match45: return MatchType.group.rawValue
+        case .match46: return MatchType.group.rawValue
+        case .match47: return MatchType.group.rawValue
+        case .match48: return MatchType.group.rawValue
+            //round of 16
+        case .match49: return MatchType.roundOf16.rawValue
+        case .match50: return MatchType.roundOf16.rawValue
+        case .match51: return MatchType.roundOf16.rawValue
+        case .match52: return MatchType.roundOf16.rawValue
+        case .match53: return MatchType.roundOf16.rawValue
+        case .match54: return MatchType.roundOf16.rawValue
+        case .match55: return MatchType.roundOf16.rawValue
+        case .match56: return MatchType.roundOf16.rawValue
+            //round of 8
+        case .match57: return MatchType.roundOf8.rawValue
+        case .match58: return MatchType.roundOf8.rawValue
+        case .match59: return MatchType.roundOf8.rawValue
+        case .match60: return MatchType.roundOf8.rawValue
+            //semifinals
+        case .match61: return MatchType.semifinal.rawValue
+        case .match62: return MatchType.semifinal.rawValue
+            //3rd place
+        case .match63: return MatchType.thirdPlace.rawValue
+            //final
+        case .match64: return MatchType.final.rawValue
+        }
+    }
+}
+
+enum MatchType: String {
+    case group      = "group"
+    case roundOf16  = "roundOf16"
+    case roundOf8   = "roundOf8"
+    case semifinal  = "semifinal"
+    case thirdPlace = "3rdPlace"
+    case final      = "final"
 }

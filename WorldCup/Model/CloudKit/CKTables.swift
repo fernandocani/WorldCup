@@ -9,41 +9,41 @@ import Foundation
 import CloudKit
 
 enum CKTablesRecordKeys {
-    static let id              = "id"
-    static let draw            = "draw"
-    static let goalsAgainst    = "goalsAgainst"
-    static let goalsDifference = "goalsDifference"
-    static let goalsFor        = "goalsFor"
-    static let lost            = "lost"
-    static let played          = "played"
-    static let points          = "points"
-    static let teamID          = "teamID"
-    static let won             = "won"
+    static let id               = "id"
+    static let draw             = "draw"
+    static let goalsAgainst     = "goalsAgainst"
+    static let goalsDifference  = "goalsDifference"
+    static let goalsFor         = "goalsFor"
+    static let lost             = "lost"
+    static let played           = "played"
+    static let points           = "points"
+    static let teamID           = "teamID"
+    static let won              = "won"
 }
 
 class CKTables {
     
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(tables: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: tables,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
         if #available(iOS 15.0, *) {
-            saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKTables: \(#function) \(tables.count) tables"))
-                case .failure(let error):
-                    print(error.localizedDescription)
+            let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+                let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                             recordIDsToDelete: nil)
+                saveOperation.modifyRecordsResultBlock = { result in
+                    continuation.resume(returning: result)
                 }
+                database.add(saveOperation)
+            }
+            switch result {
+            case .success(_):
+                return .success(true)
+            case .failure(_):
+                return .failure(.ParseFailed)
             }
         } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            return .failure(.ParseFailed)
         }
-        database.add(saveOperation)
     }
     
     class func fetch() async -> Result<[CKTablesEntity], WCError> {

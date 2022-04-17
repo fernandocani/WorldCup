@@ -61,6 +61,7 @@ class MainViewController: UIViewController {
             self.stackView.addArrangedSubview(stackViewTeams())
             self.stackView.addArrangedSubview(stackViewStadiums())
             self.stackView.addArrangedSubview(stackViewTables())
+            self.stackView.addArrangedSubview(stackViewMatches())
         }
     }
     
@@ -72,8 +73,9 @@ class MainViewController: UIViewController {
         stackView1.distribution = .fillEqually
         
         let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.publishFromScratch { result in
+            Task {
+                self.setProgress(animated: true)
+                let result = await CKManager.shared.publishFromScratch()
                 self.setProgress(animated: false)
                 switch result {
                 case .success(_):
@@ -82,6 +84,7 @@ class MainViewController: UIViewController {
                 case .failure(let error):
                     fatalError(error.localizedDescription)
                 }
+                
             }
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
@@ -91,12 +94,14 @@ class MainViewController: UIViewController {
                 let teams = await CKManager.shared.fetchTeams()
                 let stadiums = await CKManager.shared.fetchStadiums()
                 let tables = await CKManager.shared.fetchTables()
+                let matches = await CKManager.shared.fetchMatches()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch All", message: """
                             Groups: \(groups.count)
                             Teams: \(teams.count)
                             Stadiums: \(stadiums.count)
                             Tables: \(tables.count)
+                            Matches: \(matches.count)
                             """)
             }
         }))
@@ -107,16 +112,19 @@ class MainViewController: UIViewController {
                 let teams = await CKManager.shared.fetchTeams()
                 let stadiums = await CKManager.shared.fetchStadiums()
                 let tables = await CKManager.shared.fetchTables()
+                let matches = await CKManager.shared.fetchMatches()
                 
                 let groupIDS = groups.map({ $0.recordID! })
                 let teamsIDS = teams.map({ $0.recordID! })
                 let stadiumsIDS = stadiums.map({ $0.recordID! })
                 let tablesIDS = tables.map({ $0.recordID! })
+                let matchesIDS = matches.map({ $0.recordID! })
                 
                 let boolGroups = await CKManager.shared.removeGroups(by: groupIDS)
                 let boolTeams = await CKManager.shared.removeGroups(by: teamsIDS)
                 let boolStadiums = await CKManager.shared.removeGroups(by: stadiumsIDS)
                 let boolTables = await CKManager.shared.removeGroups(by: tablesIDS)
+                let boolMatches = await CKManager.shared.removeMatches(by: matchesIDS)
                 
                 self.setProgress(animated: false)
                 self.createAlert(title: "remove All",
@@ -125,6 +133,7 @@ class MainViewController: UIViewController {
                                             Teams: \(boolTeams)
                                             Stadiums: \(boolStadiums)
                                             Tables: \(boolTables)
+                                            Matches: \(boolMatches)
                                             """)
             }
         }))
@@ -289,6 +298,45 @@ class MainViewController: UIViewController {
         buttom1.setTitle("🔼  Tables", for: .normal)
         buttom2.setTitle("⏬  Tables", for: .normal)
         buttom3.setTitle("❌  Tables", for: .normal)
+        //stackView1.addArrangedSubview(buttom1)
+        stackView1.addArrangedSubview(buttom2)
+        stackView1.addArrangedSubview(buttom3)
+        return stackView1
+    }
+    
+    @available(iOS 15.0, *)
+    func stackViewMatches() -> UIStackView {
+        let stackView1 = UIStackView()
+        stackView1.spacing = 4
+        stackView1.axis = .horizontal
+        stackView1.distribution = .fillEqually
+        
+        let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            //CKManager.shared.publishStadiums() { result in
+            //
+            //}
+        }))
+        let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchMatches()
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Matches", message: "\(itens.count) matches")
+            }
+        }))
+        let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchMatches()
+                let bool = await CKManager.shared.removeMatches(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeMatches", message: "\(bool)")
+            }
+        }))
+        
+        buttom1.setTitle("🔼  Matches", for: .normal)
+        buttom2.setTitle("⏬  Matches", for: .normal)
+        buttom3.setTitle("❌  Matches", for: .normal)
         //stackView1.addArrangedSubview(buttom1)
         stackView1.addArrangedSubview(buttom2)
         stackView1.addArrangedSubview(buttom3)
