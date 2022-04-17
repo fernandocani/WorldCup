@@ -9,51 +9,47 @@ import Foundation
 import CloudKit
 
 enum CKTablesRecordKeys {
-    static let id              = "id"
-    static let draw            = "draw"
-    static let goalsAgainst    = "goalsAgainst"
-    static let goalsDifference = "goalsDifference"
-    static let goalsFor        = "goalsFor"
-    static let lost            = "lost"
-    static let played          = "played"
-    static let points          = "points"
-    static let teamID          = "teamID"
-    static let won             = "won"
+    static let id               = "id"
+    static let draw             = "draw"
+    static let goalsAgainst     = "goalsAgainst"
+    static let goalsDifference  = "goalsDifference"
+    static let goalsFor         = "goalsFor"
+    static let lost             = "lost"
+    static let played           = "played"
+    static let points           = "points"
+    static let teamID           = "teamID"
+    static let won              = "won"
 }
 
 class CKTables {
     
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(tables: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: tables,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
-        if #available(iOS 15.0, *) {
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                         recordIDsToDelete: nil)
             saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKTables: \(#function) \(tables.count) tables"))
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                continuation.resume(returning: result)
             }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            database.add(saveOperation)
         }
-        database.add(saveOperation)
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
-    class func fetch(callback: @escaping (Result<[CKTablesEntity], WCError>) -> Void) {
+    class func fetch() async -> Result<[CKTablesEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
         let query = CKQuery(recordType: RecordTypes.tables, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKTablesEntity]()
         print("fetching...")
-        if #available(iOS 15.0, *) {
+        let itens: [CKTablesEntity] = await withCheckedContinuation { continuation in
+            var temp = [CKTablesEntity]()
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
@@ -80,40 +76,33 @@ class CKTables {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful")
-                    DispatchQueue.main.async {
-                        callback(.success(temp))
-                    }
+                    print("the query was successful")
                 case let .failure(error):
                     print("Something went wrong queryResultBlock \(error.localizedDescription)")
                 }
+                continuation.resume(returning: temp)
             }
             database.add(operation)
-        } else {
-            callback(.failure(.ParseFailed))
         }
+        return .success(itens)
     }
     
-    class func removeAll(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
-                                                     recordIDsToDelete: ids)
+    class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {
         print("removing...")
-        if #available(iOS 15.0, *) {
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
+                                                         recordIDsToDelete: ids)
             saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    print("CKTables: ", #function, "\(ids.count) tables")
-                    callback(true)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                continuation.resume(returning: result)
             }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            database.add(saveOperation)
         }
-        database.add(saveOperation)
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
 }

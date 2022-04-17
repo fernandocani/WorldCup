@@ -24,36 +24,31 @@ class CKMatches {
     
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(matches: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        fatalError("falta implementar")
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: matches,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
-        if #available(iOS 15.0, *) {
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                         recordIDsToDelete: nil)
             saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKMatches: \(#function) \(matches.count) matches"))
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                continuation.resume(returning: result)
             }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            database.add(saveOperation)
         }
-        database.add(saveOperation)
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
-    class func fetch(callback: @escaping (Result<[CKMatchesEntity], WCError>) -> Void) {
+    class func fetch() async -> Result<[CKMatchesEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
         let query = CKQuery(recordType: RecordTypes.matches, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKMatchesEntity]()
         print("fetching...")
-        if #available(iOS 15.0, *) {
+        let itens: [CKMatchesEntity] = await withCheckedContinuation { continuation in
+            var temp = [CKMatchesEntity]()
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
@@ -78,19 +73,35 @@ class CKMatches {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful")
-                    DispatchQueue.main.async {
-                        callback(.success(temp))
-                    }
+                    print("the query was successful")
                 case let .failure(error):
                     print("Something went wrong queryResultBlock \(error.localizedDescription)")
                 }
+                continuation.resume(returning: temp)
             }
             database.add(operation)
-        } else {
-            callback(.failure(.ParseFailed))
+        }
+        return .success(itens)
+    }
+    
+    class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {
+        print("removing...")
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
+                                                         recordIDsToDelete: ids)
+            saveOperation.modifyRecordsResultBlock = { result in
+                continuation.resume(returning: result)
+            }
+            database.add(saveOperation)
+        }
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
         }
     }
+    
 }
 
 struct CKMatchesEntity: Identifiable {
@@ -106,7 +117,7 @@ struct CKMatchesEntity: Identifiable {
     var type: String = ""
 }
 
-enum MatchesConstructor {
+enum MatchesConstructor: CaseIterable {
     case match01
     case match02
     case match03
@@ -207,7 +218,7 @@ enum MatchesConstructor {
         case .match30: return "H4"
         case .match31: return "G1"
         case .match32: return "H1"
-        
+            
         case .match33: return "B4"
         case .match34: return "B2"
         case .match35: return "A2"
@@ -224,7 +235,7 @@ enum MatchesConstructor {
         case .match46: return "H4"
         case .match47: return "G2"
         case .match48: return "G4"
-
+            
         case .match49: return "1stA"
         case .match50: return "1stC"
         case .match51: return "1stB"
@@ -233,15 +244,15 @@ enum MatchesConstructor {
         case .match54: return "1stG"
         case .match55: return "1stF"
         case .match56: return "1stH"
-        
+            
         case .match57: return "W49"
         case .match58: return "W53"
         case .match59: return "W51"
         case .match60: return "W55"
-        
+            
         case .match61: return "W57"
         case .match62: return "W59"
-        
+            
         case .match63: return "L61"
             
         case .match64: return "W61"
@@ -283,7 +294,7 @@ enum MatchesConstructor {
         case .match30: return "H2"
         case .match31: return "G3"
         case .match32: return "H3"
-        
+            
         case .match33: return "B1"
         case .match34: return "B3"
         case .match35: return "A3"
@@ -300,7 +311,7 @@ enum MatchesConstructor {
         case .match46: return "H1"
         case .match47: return "G3"
         case .match48: return "G1"
-
+            
         case .match49: return "2stB"
         case .match50: return "2stD"
         case .match51: return "2stA"
@@ -309,15 +320,15 @@ enum MatchesConstructor {
         case .match54: return "2stH"
         case .match55: return "2stE"
         case .match56: return "2stG"
-        
+            
         case .match57: return "W50"
         case .match58: return "W54"
         case .match59: return "W52"
         case .match60: return "W56"
-        
+            
         case .match61: return "W58"
         case .match62: return "W60"
-        
+            
         case .match63: return "L62"
             
         case .match64: return "W62"
@@ -359,7 +370,7 @@ enum MatchesConstructor {
         case .match30: return 7
         case .match31: return 6
         case .match32: return 5
-        
+            
         case .match33: return 4
         case .match34: return 3
         case .match35: return 2
@@ -376,7 +387,7 @@ enum MatchesConstructor {
         case .match46: return 7
         case .match47: return 6
         case .match48: return 5
-
+            
         case .match49: return 2
         case .match50: return 4
         case .match51: return 1
@@ -385,15 +396,15 @@ enum MatchesConstructor {
         case .match54: return 6
         case .match55: return 7
         case .match56: return 5
-        
+            
         case .match57: return 5
         case .match58: return 7
         case .match59: return 1
         case .match60: return 3
-        
+            
         case .match61: return 5
         case .match62: return 1
-        
+            
         case .match63: return 2
             
         case .match64: return 5
@@ -435,7 +446,7 @@ enum MatchesConstructor {
         case .match30: return "28/11/2022 16:00"
         case .match31: return "28/11/2022 19:00"
         case .match32: return "28/11/2022 22:00"
-        
+            
         case .match33: return "29/11/2022 22:00"
         case .match34: return "29/11/2022 22:00"
         case .match35: return "29/11/2022 18:00"
@@ -452,7 +463,7 @@ enum MatchesConstructor {
         case .match46: return "02/12/2022 18:00"
         case .match47: return "02/12/2022 22:00"
         case .match48: return "02/12/2022 22:00"
-        //round of 16
+            //round of 16
         case .match49: return "03/12/2022 18:00"
         case .match50: return "03/12/2022 22:00"
         case .match51: return "04/12/2022 22:00"
@@ -461,19 +472,179 @@ enum MatchesConstructor {
         case .match54: return "05/12/2022 22:00"
         case .match55: return "06/12/2022 18:00"
         case .match56: return "06/12/2022 22:00"
-        //round of 8
+            //round of 8
         case .match57: return "09/12/2022 22:00"
         case .match58: return "09/12/2022 18:00"
         case .match59: return "10/12/2022 22:00"
         case .match60: return "10/12/2022 18:00"
-        //semifinals
+            //semifinals
         case .match61: return "13/12/2022 22:00"
         case .match62: return "14/12/2022 22:00"
-        //3rd place
+            //3rd place
         case .match63: return "17/12/2022 18:00"
-        //final
+            //final
         case .match64: return "18/12/2022 18:00"
         }
     }
     
+    var index: Int {
+        switch self {
+        case .match01: return 01
+        case .match02: return 02
+        case .match03: return 03
+        case .match04: return 04
+        case .match05: return 05
+        case .match06: return 06
+        case .match07: return 07
+        case .match08: return 08
+        case .match09: return 09
+        case .match10: return 10
+        case .match11: return 11
+        case .match12: return 12
+        case .match13: return 13
+        case .match14: return 14
+        case .match15: return 15
+        case .match16: return 16
+            
+        case .match17: return 17
+        case .match18: return 18
+        case .match19: return 19
+        case .match20: return 20
+        case .match21: return 21
+        case .match22: return 22
+        case .match23: return 23
+        case .match24: return 24
+        case .match25: return 25
+        case .match26: return 26
+        case .match27: return 27
+        case .match28: return 28
+        case .match29: return 29
+        case .match30: return 30
+        case .match31: return 31
+        case .match32: return 32
+            
+        case .match33: return 33
+        case .match34: return 34
+        case .match35: return 35
+        case .match36: return 36
+        case .match37: return 37
+        case .match38: return 38
+        case .match39: return 39
+        case .match40: return 40
+        case .match41: return 41
+        case .match42: return 42
+        case .match43: return 43
+        case .match44: return 44
+        case .match45: return 45
+        case .match46: return 46
+        case .match47: return 47
+        case .match48: return 48
+            
+        case .match49: return 49
+        case .match50: return 50
+        case .match51: return 51
+        case .match52: return 52
+        case .match53: return 53
+        case .match54: return 54
+        case .match55: return 55
+        case .match56: return 56
+            
+        case .match57: return 57
+        case .match58: return 58
+        case .match59: return 59
+        case .match60: return 60
+            
+        case .match61: return 61
+        case .match62: return 62
+            
+        case .match63: return 63
+            
+        case .match64: return 64
+        }
+    }
+    
+    var type: String {
+        switch self {
+        case .match01: return MatchType.group.rawValue
+        case .match02: return MatchType.group.rawValue
+        case .match03: return MatchType.group.rawValue
+        case .match04: return MatchType.group.rawValue
+        case .match05: return MatchType.group.rawValue
+        case .match06: return MatchType.group.rawValue
+        case .match07: return MatchType.group.rawValue
+        case .match08: return MatchType.group.rawValue
+        case .match09: return MatchType.group.rawValue
+        case .match10: return MatchType.group.rawValue
+        case .match11: return MatchType.group.rawValue
+        case .match12: return MatchType.group.rawValue
+        case .match13: return MatchType.group.rawValue
+        case .match14: return MatchType.group.rawValue
+        case .match15: return MatchType.group.rawValue
+        case .match16: return MatchType.group.rawValue
+            
+        case .match17: return MatchType.group.rawValue
+        case .match18: return MatchType.group.rawValue
+        case .match19: return MatchType.group.rawValue
+        case .match20: return MatchType.group.rawValue
+        case .match21: return MatchType.group.rawValue
+        case .match22: return MatchType.group.rawValue
+        case .match23: return MatchType.group.rawValue
+        case .match24: return MatchType.group.rawValue
+        case .match25: return MatchType.group.rawValue
+        case .match26: return MatchType.group.rawValue
+        case .match27: return MatchType.group.rawValue
+        case .match28: return MatchType.group.rawValue
+        case .match29: return MatchType.group.rawValue
+        case .match30: return MatchType.group.rawValue
+        case .match31: return MatchType.group.rawValue
+        case .match32: return MatchType.group.rawValue
+            
+        case .match33: return MatchType.group.rawValue
+        case .match34: return MatchType.group.rawValue
+        case .match35: return MatchType.group.rawValue
+        case .match36: return MatchType.group.rawValue
+        case .match37: return MatchType.group.rawValue
+        case .match38: return MatchType.group.rawValue
+        case .match39: return MatchType.group.rawValue
+        case .match40: return MatchType.group.rawValue
+        case .match41: return MatchType.group.rawValue
+        case .match42: return MatchType.group.rawValue
+        case .match43: return MatchType.group.rawValue
+        case .match44: return MatchType.group.rawValue
+        case .match45: return MatchType.group.rawValue
+        case .match46: return MatchType.group.rawValue
+        case .match47: return MatchType.group.rawValue
+        case .match48: return MatchType.group.rawValue
+            //round of 16
+        case .match49: return MatchType.roundOf16.rawValue
+        case .match50: return MatchType.roundOf16.rawValue
+        case .match51: return MatchType.roundOf16.rawValue
+        case .match52: return MatchType.roundOf16.rawValue
+        case .match53: return MatchType.roundOf16.rawValue
+        case .match54: return MatchType.roundOf16.rawValue
+        case .match55: return MatchType.roundOf16.rawValue
+        case .match56: return MatchType.roundOf16.rawValue
+            //round of 8
+        case .match57: return MatchType.roundOf8.rawValue
+        case .match58: return MatchType.roundOf8.rawValue
+        case .match59: return MatchType.roundOf8.rawValue
+        case .match60: return MatchType.roundOf8.rawValue
+            //semifinals
+        case .match61: return MatchType.semifinal.rawValue
+        case .match62: return MatchType.semifinal.rawValue
+            //3rd place
+        case .match63: return MatchType.thirdPlace.rawValue
+            //final
+        case .match64: return MatchType.final.rawValue
+        }
+    }
+}
+
+enum MatchType: String {
+    case group      = "group"
+    case roundOf16  = "roundOf16"
+    case roundOf8   = "roundOf8"
+    case semifinal  = "semifinal"
+    case thirdPlace = "3rdPlace"
+    case final      = "final"
 }

@@ -54,17 +54,17 @@ class MainViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = itemNewCode
     }
     
+    // MARK: - Additional Buttons
+    
     private func setupAddtitionalButtons() {
-        if #available(iOS 15.0, *) {
-            self.stackView.addArrangedSubview(stackViewAll())
-            self.stackView.addArrangedSubview(stackViewGroups())
-            self.stackView.addArrangedSubview(stackViewTeams())
-            self.stackView.addArrangedSubview(stackViewStadiums())
-            self.stackView.addArrangedSubview(stackViewTables())
-        }
+        self.stackView.addArrangedSubview(stackViewAll())
+        self.stackView.addArrangedSubview(stackViewGroups())
+        self.stackView.addArrangedSubview(stackViewTeams())
+        self.stackView.addArrangedSubview(stackViewStadiums())
+        self.stackView.addArrangedSubview(stackViewTables())
+        self.stackView.addArrangedSubview(stackViewMatches())
     }
     
-    @available(iOS 15.0, *)
     func stackViewAll() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -72,8 +72,9 @@ class MainViewController: UIViewController {
         stackView1.distribution = .fillEqually
         
         let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.publishFromScratch { result in
+            Task {
+                self.setProgress(animated: true)
+                let result = await CKManager.shared.publishFromScratch()
                 self.setProgress(animated: false)
                 switch result {
                 case .success(_):
@@ -82,62 +83,57 @@ class MainViewController: UIViewController {
                 case .failure(let error):
                     fatalError(error.localizedDescription)
                 }
+                
             }
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { groups in
-                CKManager.shared.fetchTeams { teams in
-                    CKManager.shared.fetchStadiums { stadiums in
-                        CKManager.shared.fetchTables { tables in
-                            self.setProgress(animated: false)
-                            self.createAlert(title: "Fetch All", message: """
+            Task {
+                let groups = await CKManager.shared.fetchGroups()
+                let teams = await CKManager.shared.fetchTeams()
+                let stadiums = await CKManager.shared.fetchStadiums()
+                let tables = await CKManager.shared.fetchTables()
+                let matches = await CKManager.shared.fetchMatches()
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch All", message: """
                             Groups: \(groups.count)
                             Teams: \(teams.count)
                             Stadiums: \(stadiums.count)
                             Tables: \(tables.count)
+                            Matches: \(matches.count)
                             """)
-                        }
-                    }
-                }
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
             self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { groups in
-                print("Success fetchGroups")
+            Task {
+                let groups = await CKManager.shared.fetchGroups()
+                let teams = await CKManager.shared.fetchTeams()
+                let stadiums = await CKManager.shared.fetchStadiums()
+                let tables = await CKManager.shared.fetchTables()
+                let matches = await CKManager.shared.fetchMatches()
+                
                 let groupIDS = groups.map({ $0.recordID! })
-                CKManager.shared.fetchTeams { teams in
-                    print("Success fetchTeams")
-                    let teamsIDS = teams.map({ $0.recordID! })
-                    CKManager.shared.fetchStadiums { stadiums in
-                        print("Success fetchStadiums")
-                        let stadiumsIDS = stadiums.map({ $0.recordID! })
-                        CKManager.shared.fetchTables { tables in
-                            print("Success fetchTables")
-                            let tablesIDS = tables.map({ $0.recordID! })
-                            CKManager.shared.removeGroups(by: groupIDS) { boolGroups in
-                                print("Success removeGroups")
-                                CKManager.shared.removeTeams(by: teamsIDS) { boolTeams in
-                                    print("Success removeTeams")
-                                    CKManager.shared.removeStadiums(by: stadiumsIDS) { boolStadiums in
-                                        print("Success removeStadiums")
-                                        CKManager.shared.removeTables(by: tablesIDS) { boolTables in
-                                            print("Success removeTables")
-                                            self.setProgress(animated: false)
-                                            self.createAlert(title: "remove All", message: """
+                let teamsIDS = teams.map({ $0.recordID! })
+                let stadiumsIDS = stadiums.map({ $0.recordID! })
+                let tablesIDS = tables.map({ $0.recordID! })
+                let matchesIDS = matches.map({ $0.recordID! })
+                
+                let boolGroups = await CKManager.shared.removeGroups(by: groupIDS)
+                let boolTeams = await CKManager.shared.removeGroups(by: teamsIDS)
+                let boolStadiums = await CKManager.shared.removeGroups(by: stadiumsIDS)
+                let boolTables = await CKManager.shared.removeGroups(by: tablesIDS)
+                let boolMatches = await CKManager.shared.removeMatches(by: matchesIDS)
+                
+                self.setProgress(animated: false)
+                self.createAlert(title: "remove All",
+                                 message: """
                                             Groups: \(boolGroups)
                                             Teams: \(boolTeams)
                                             Stadiums: \(boolStadiums)
                                             Tables: \(boolTables)
+                                            Matches: \(boolMatches)
                                             """)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }))
         
@@ -150,7 +146,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewGroups() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -163,19 +158,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchGroups()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Groups", message: "\(itens.count) groups")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchGroups { itens in
-                CKManager.shared.removeGroups(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeGroups", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchGroups()
+                let bool = await CKManager.shared.removeGroups(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeGroups", message: "\(bool)")
             }
         }))
         
@@ -188,7 +184,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewTeams() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -201,19 +196,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTeams { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTeams()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Teams", message: "\(itens.count) teams")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTeams { itens in
-                CKManager.shared.removeTeams(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeTeams", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTeams()
+                let bool = await CKManager.shared.removeTeams(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeTeams", message: "\(bool)")
             }
         }))
         
@@ -226,7 +222,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewStadiums() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -241,19 +236,20 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchStadiums { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchStadiums()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Stadiums", message: "\(itens.count) stadiums")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchStadiums { itens in
-                CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeStadiums", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchStadiums()
+                let bool = await CKManager.shared.removeStadiums(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeStadiums", message: "\(bool)")
             }
         }))
         buttom1.setTitle("🔼  Stad", for: .normal)
@@ -265,7 +261,6 @@ class MainViewController: UIViewController {
         return stackView1
     }
     
-    @available(iOS 15.0, *)
     func stackViewTables() -> UIStackView {
         let stackView1 = UIStackView()
         stackView1.spacing = 4
@@ -278,25 +273,64 @@ class MainViewController: UIViewController {
             //}
         }))
         let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTables { itens in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTables()
                 self.setProgress(animated: false)
                 self.createAlert(title: "Fetch Tables", message: "\(itens.count) tables")
             }
         }))
         let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
-            self.setProgress(animated: true)
-            CKManager.shared.fetchTables { itens in
-                CKManager.shared.removeTables(by: itens.map({ $0.recordID! })) { bool in
-                    self.setProgress(animated: false)
-                    self.createAlert(title: "removeTables", message: "\(bool)")
-                }
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchTables()
+                let bool = await CKManager.shared.removeTables(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeTables", message: "\(bool)")
             }
         }))
         
         buttom1.setTitle("🔼  Tables", for: .normal)
         buttom2.setTitle("⏬  Tables", for: .normal)
         buttom3.setTitle("❌  Tables", for: .normal)
+        //stackView1.addArrangedSubview(buttom1)
+        stackView1.addArrangedSubview(buttom2)
+        stackView1.addArrangedSubview(buttom3)
+        return stackView1
+    }
+    
+    func stackViewMatches() -> UIStackView {
+        let stackView1 = UIStackView()
+        stackView1.spacing = 4
+        stackView1.axis = .horizontal
+        stackView1.distribution = .fillEqually
+        
+        let buttom1 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            //CKManager.shared.publishStadiums() { result in
+            //
+            //}
+        }))
+        let buttom2 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchMatches()
+                self.setProgress(animated: false)
+                self.createAlert(title: "Fetch Matches", message: "\(itens.count) matches")
+            }
+        }))
+        let buttom3 = UIButton(configuration: .filled(), primaryAction: UIAction(handler: { _ in
+            Task {
+                self.setProgress(animated: true)
+                let itens = await CKManager.shared.fetchMatches()
+                let bool = await CKManager.shared.removeMatches(by: itens.map({ $0.recordID! }))
+                self.setProgress(animated: false)
+                self.createAlert(title: "removeMatches", message: "\(bool)")
+            }
+        }))
+        
+        buttom1.setTitle("🔼  Matches", for: .normal)
+        buttom2.setTitle("⏬  Matches", for: .normal)
+        buttom3.setTitle("❌  Matches", for: .normal)
         //stackView1.addArrangedSubview(buttom1)
         stackView1.addArrangedSubview(buttom2)
         stackView1.addArrangedSubview(buttom3)

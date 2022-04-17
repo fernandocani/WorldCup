@@ -38,7 +38,6 @@
 		DF350ED227FABE100036BE74 /* MainViewController+NSToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF350ED127FABE100036BE74 /* MainViewController+NSToolbar.swift */; };
 		DFA0BB4128054F0400813F2B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB4028054F0400813F2B /* Constants.swift */; };
 		DFA0BB4428055D8300813F2B /* CKStadium.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB4328055D8300813F2B /* CKStadium.swift */; };
-		DFA0BB6B2805E48100813F2B /* CKPlayers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB6A2805E48100813F2B /* CKPlayers.swift */; };
 		DFA0BB6D2806028E00813F2B /* CKTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB6C2806028E00813F2B /* CKTeams.swift */; };
 		DFA0BB6F280602A100813F2B /* CKTables.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB6E280602A100813F2B /* CKTables.swift */; };
 		DFA0BB71280602A700813F2B /* CKMatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB70280602A700813F2B /* CKMatches.swift */; };
@@ -104,7 +103,6 @@
 		DF350F1D27FB5FBE0036BE74 /* TestFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TestFramework.framework; sourceTree = "<group>"; };
 		DFA0BB4028054F0400813F2B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		DFA0BB4328055D8300813F2B /* CKStadium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKStadium.swift; sourceTree = "<group>"; };
-		DFA0BB6A2805E48100813F2B /* CKPlayers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKPlayers.swift; sourceTree = "<group>"; };
 		DFA0BB6C2806028E00813F2B /* CKTeams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKTeams.swift; sourceTree = "<group>"; };
 		DFA0BB6E280602A100813F2B /* CKTables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKTables.swift; sourceTree = "<group>"; };
 		DFA0BB70280602A700813F2B /* CKMatches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKMatches.swift; sourceTree = "<group>"; };
@@ -272,7 +270,6 @@
 				DFA0BB7628060D2300813F2B /* CKManager.swift */,
 				DFA0BB74280602F800813F2B /* CKConstants.swift */,
 				DFA0BB4328055D8300813F2B /* CKStadium.swift */,
-				DFA0BB6A2805E48100813F2B /* CKPlayers.swift */,
 				DFA0BB6C2806028E00813F2B /* CKTeams.swift */,
 				DFA0BB6E280602A100813F2B /* CKTables.swift */,
 				DFA0BB70280602A700813F2B /* CKMatches.swift */,
@@ -419,7 +416,6 @@
 			files = (
 				DF326BD527F822CE00497CDF /* WorldCup.xcdatamodeld in Sources */,
 				DFA0BB4128054F0400813F2B /* Constants.swift in Sources */,
-				DFA0BB6B2805E48100813F2B /* CKPlayers.swift in Sources */,
 				DF326C0C27F828C800497CDF /* Service.swift in Sources */,
 				DF326BCB27F822CE00497CDF /* AppDelegate.swift in Sources */,
 				DFA0BB73280602AD00813F2B /* CKGroups.swift in Sources */,
@@ -543,7 +539,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -598,7 +594,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -628,7 +624,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -664,7 +660,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

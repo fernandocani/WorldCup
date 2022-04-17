@@ -18,35 +18,31 @@ class CKGroups {
     
     static let database = CKContainer(identifier: Constants.cloudKitContainerIdentifier).publicCloudDatabase
     
-    class func publish(groups: [CKRecord], callback: @escaping (Result<String, WCError>) -> Void) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: groups,
-                                                     recordIDsToDelete: nil)
-        print("publishing...")
-        if #available(iOS 15.0, *) {
+    class func publish(itens: [CKRecord]) async -> Result<Bool, WCError> {
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: itens,
+                                                         recordIDsToDelete: nil)
             saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    callback(.success("CKGroups: \(#function) \(groups.count) groups"))
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                continuation.resume(returning: result)
             }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            database.add(saveOperation)
         }
-        database.add(saveOperation)
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
-    class func fetch(callback: @escaping (Result<[CKGroupsEntity], WCError>) -> Void) {
+    class func fetch() async -> Result<[CKGroupsEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
         let query = CKQuery(recordType: RecordTypes.groups, predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var temp = [CKGroupsEntity]()
         print("fetching...")
-        if #available(iOS 15.0, *) {
+        let itens: [CKGroupsEntity] = await withCheckedContinuation { continuation in
+            var temp = [CKGroupsEntity]()
             operation.recordMatchedBlock = { (recordId, result) in
                 switch result {
                 case let .success(record):
@@ -66,40 +62,33 @@ class CKGroups {
                 //print("CKStad queryCompletionBlock: Jobs done!")
                 switch result {
                 case .success(_):
-                    //print("the query was successful")
-                    DispatchQueue.main.async {
-                        callback(.success(temp))
-                    }
+                    print("the query was successful")
                 case let .failure(error):
                     print("Something went wrong queryResultBlock \(error.localizedDescription)")
                 }
+                continuation.resume(returning: temp)
             }
             database.add(operation)
-        } else {
-            callback(.failure(.ParseFailed))
         }
+        return .success(itens)
     }
     
-    class func removeAll(by ids: [CKRecord.ID], callback: @escaping (Bool) -> ()) {
-        let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
-                                                     recordIDsToDelete: ids)
+    class func removeAll(by ids: [CKRecord.ID]) async -> Result<Bool, WCError> {
         print("removing...")
-        if #available(iOS 15.0, *) {
+        let result: Result<Void, Error> = await withCheckedContinuation { continuation in
+            let saveOperation = CKModifyRecordsOperation(recordsToSave: nil,
+                                                         recordIDsToDelete: ids)
             saveOperation.modifyRecordsResultBlock = { result in
-                switch result {
-                case .success(_):
-                    print("CKGroups: ", #function, "\(ids.count) groups")
-                    callback(true)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+                continuation.resume(returning: result)
             }
-        } else {
-            saveOperation.modifyRecordsCompletionBlock = { _, _, _ in
-                print(#function, "Fernando saved to DISCOVER")
-            }
+            database.add(saveOperation)
         }
-        database.add(saveOperation)
+        switch result {
+        case .success(_):
+            return .success(true)
+        case .failure(_):
+            return .failure(.ParseFailed)
+        }
     }
     
 }
