@@ -5,41 +5,6 @@
 //  Created by Fernando Cani on 03/04/22.
 //
 
-//import Foundation
-//
-//final class GroupDetailViewModel {
-//
-//    private var coreData = CoreDataManager.shared
-//
-//    var onUpdate = {}
-//    var onErrorHandling: ((WCError) -> Void) = { _ in }
-//
-//    var name: String?
-//    var id: Int64
-//
-//    init(name: String?, id: Int64) {
-//        self.name = name
-//        self.id = id
-//    }
-//
-//    var teams: [TeamEntity] = [] {
-//        didSet {
-//            self.onUpdate()
-//        }
-//    }
-//
-//    func getTeams() {
-//        let result = self.coreData.getTeamsByGroup(by: self.id)
-//        switch result {
-//        case .success(let item):
-//            self.teams = item
-//        case .failure(let error):
-//            print(error.localizedDescription)
-//        }
-//    }
-//
-//}
-
 import Foundation
 import CoreData
 

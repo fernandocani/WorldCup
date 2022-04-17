@@ -35,11 +35,6 @@ class MainViewController: UIViewController {
         self.setupCountdown()
         self.setupBarButtonItem()
         self.setupAddtitionalButtons()
-        
-        //for i in 1...64 {
-        //    print("case match\(i)")
-        //}
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {

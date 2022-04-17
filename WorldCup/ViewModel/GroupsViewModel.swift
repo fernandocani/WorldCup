@@ -5,31 +5,6 @@
 //  Created by Fernando Cani on 03/04/22.
 //
 
-//final class GroupsViewModel {
-//
-//    private var coreData = CoreDataManager.shared
-//
-//    var onUpdate = {}
-//    var onErrorHandling: ((WCError) -> Void) = { _ in }
-//
-//    var groups: [GroupEntity] = [] {
-//        didSet {
-//            self.onUpdate()
-//        }
-//    }
-//
-//    func getGroups() {
-//        let result = self.coreData.getGroups()
-//        switch result {
-//        case .success(let item):
-//            self.groups = item
-//        case .failure(let error):
-//            print(error.localizedDescription)
-//        }
-//    }
-//
-//}
-
 import Foundation
 import CoreData
 

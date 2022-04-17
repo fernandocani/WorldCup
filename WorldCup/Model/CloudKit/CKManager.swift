@@ -16,7 +16,7 @@ final class CKManager {
         var stadiumsEntity  = self.createStadiums()
         var groupsEntity    = self.createGroups()
         var teamsEntity     = self.createTeams()
-        var tablesEntity    = self.createTables()
+        var tablesEntity    = self.createTables(teams: teamsEntity)
         var matchesEntity   = self.createMatches()
         print("--in")
         self.fixObjects(stadiums: &stadiumsEntity,
@@ -219,7 +219,6 @@ extension CKManager {
                 item.setValue(value.capacity,       forKey: CKStadiumRecordKeys.capacity)
                 item.setValue(value.city,           forKey: CKStadiumRecordKeys.city)
                 item.setValue(value.index,          forKey: CKStadiumRecordKeys.index)
-                print(item)
                 itens.append(item)
             }
         case let (array as [CKTeamsEntity]) as Any:
@@ -232,7 +231,6 @@ extension CKManager {
                 item.setValue(value.groupPosition,  forKey: CKTeamsRecordKeys.groupPosition)
                 item.setValue(value.rank,           forKey: CKTeamsRecordKeys.rank)
                 item.setValue(value.tableID,        forKey: CKTeamsRecordKeys.tableID)
-                print(item)
                 itens.append(item)
             }
         case let (array as [CKTablesEntity]) as Any:
@@ -248,7 +246,6 @@ extension CKManager {
                 item.setValue(value.goalsAgainst,   forKey: CKTablesRecordKeys.goalsAgainst)
                 item.setValue(value.goalsFor,       forKey: CKTablesRecordKeys.goalsFor)
                 item.setValue(value.goalsDifference,forKey: CKTablesRecordKeys.goalsDifference)
-                print(item)
                 itens.append(item)
             }
         case let (array as [CKMatchesEntity]) as Any:
@@ -263,7 +260,6 @@ extension CKManager {
                 item.setValue(value.goalsAway,      forKey: CKMatchesRecordKeys.goalsAway)
                 item.setValue(value.goalsHome,      forKey: CKMatchesRecordKeys.goalsHome)
                 item.setValue(value.type,           forKey: CKMatchesRecordKeys.type)
-                print(item)
                 itens.append(item)
             }
         case let (array as [CKGroupsEntity]) as Any:
@@ -272,7 +268,6 @@ extension CKManager {
                 item.setValue(value.id,             forKey: CKGroupsRecordKeys.id)
                 item.setValue(value.name,           forKey: CKGroupsRecordKeys.name)
                 item.setValue(value.index,          forKey: CKGroupsRecordKeys.index)
-                print(item)
                 itens.append(item)
             }
         default: break
@@ -322,21 +317,38 @@ extension CKManager {
         return itens
     }
     
-    private func createTables() -> [CKTablesEntity] {
+    private func createTables(teams: [CKTeamsEntity]? = nil) -> [CKTablesEntity] {
         var itens = [CKTablesEntity]()
-        for _ in 1...EnumCountries.allCases.filter({ $0.groupPosition != 99 }).count {
-            let uuidString = UUID().uuidString
-            let item = CKTablesEntity(id: uuidString,
-                                      teamID: "teamID",
-                                      points: 0,
-                                      played: 0,
-                                      won: 0,
-                                      lost: 0,
-                                      draw: 0,
-                                      goalsAgainst: 0,
-                                      goalsFor: 0,
-                                      goalsDifference: 0)
-            itens.append(item)
+        if let teams = teams {
+            for team in teams {
+                let uuidString = UUID().uuidString
+                let item = CKTablesEntity(id: uuidString,
+                                          teamID: team.id,
+                                          points: 0,
+                                          played: 0,
+                                          won: 0,
+                                          lost: 0,
+                                          draw: 0,
+                                          goalsAgainst: 0,
+                                          goalsFor: 0,
+                                          goalsDifference: 0)
+                itens.append(item)
+            }
+        } else {
+            for _ in 1...EnumCountries.allCases.filter({ $0.groupPosition != 99 }).count {
+                let uuidString = UUID().uuidString
+                let item = CKTablesEntity(id: uuidString,
+                                          teamID: "teamID",
+                                          points: 0,
+                                          played: 0,
+                                          won: 0,
+                                          lost: 0,
+                                          draw: 0,
+                                          goalsAgainst: 0,
+                                          goalsFor: 0,
+                                          goalsDifference: 0)
+                itens.append(item)
+            }
         }
         return itens
     }
@@ -401,8 +413,7 @@ extension CKManager {
                    let team = teams.first(where: { $0.groupID == groupID && $0.groupPosition == groupPosition }) {
                     matches[index].teamAwayID = team.id
                 }
-            case .roundOf16:
-                print("roundOf16")
+            case .roundOf16:    print("roundOf16")
             case .roundOf8:     print("roundOf8")
             case .semifinal:    print("semifinal")
             case .thirdPlace:   print("thirdPlace")
@@ -410,23 +421,6 @@ extension CKManager {
             case .none: break
             }
         }
-        
-        //print("teste")
-        //stadiums.removeAll()
-        //groups.removeAll()
-        //teams.removeAll()
-        //tables.removeAll()
-        //matches.removeAll()
-    }
-    
-    private func getGroupID(from groups: [CKRecord], by teamGroupID: Int) -> String? {
-        let first = groups.first { record in
-            guard let recordIndex = record[CKGroupsRecordKeys.index] as? Int else { return false }
-            return recordIndex == teamGroupID
-        }
-        guard let first = first else { return nil }
-        guard let recordIndex = first[CKGroupsRecordKeys.id] as? String else { return nil }
-        return recordIndex
     }
 
 }
