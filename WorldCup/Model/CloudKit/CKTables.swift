@@ -45,7 +45,7 @@ class CKTables {
     class func fetch() async -> Result<[CKTablesEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
-        let query = CKQuery(recordType: RecordTypes.tables, predicate: predicate)
+        let query = CKQuery(recordType: RecordTypes.tables.title, predicate: predicate)
         let operation = CKQueryOperation(query: query)
         print("fetching...")
         let itens: [CKTablesEntity] = await withCheckedContinuation { continuation in

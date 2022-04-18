@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class MainViewController: UIViewController {
 
@@ -34,7 +35,9 @@ class MainViewController: UIViewController {
         self.lblCountdown.text = self.getDiff()
         self.setupCountdown()
         self.setupBarButtonItem()
-        self.setupAddtitionalButtons()
+        //self.setupAddtitionalButtons()
+        
+        //self.btnSettings()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -47,6 +50,23 @@ class MainViewController: UIViewController {
                                           target: self,
                                           action: #selector(self.btnOptions))
         self.navigationItem.rightBarButtonItem = itemNewCode
+        
+        let itemSettings = UIBarButtonItem(barButtonSystemItem: .add,
+                                          target: self,
+                                          action: #selector(self.btnSettings))
+        self.navigationItem.leftBarButtonItem = itemSettings
+    }
+    
+    @objc
+    func btnSettings() {
+        DispatchQueue.main.async {
+            let vc = ContentView {
+                //self.navigationController?.presentedViewController?.dismiss(animated: true)
+                self.presentedViewController?.dismiss(animated: true)
+            }
+            let host = UIHostingController(rootView: vc)
+            self.present(host, animated: true)
+        }
     }
     
     // MARK: - Additional Buttons

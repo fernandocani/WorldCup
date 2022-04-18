@@ -44,7 +44,7 @@ class CKStadium {
     
     class func fetch() async -> Result<[CKStadiumEntity], WCError> {
         let predicate = NSPredicate(value: true)
-        let query = CKQuery(recordType: RecordTypes.stadiums, predicate: predicate)
+        let query = CKQuery(recordType: RecordTypes.stadiums.title, predicate: predicate)
         print("fetching...")
         let itens: [CKStadiumEntity] = await withCheckedContinuation { continuation in
             var temp = [CKStadiumEntity]()

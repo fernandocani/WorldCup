@@ -207,7 +207,7 @@ final class CKManager {
                      type: String? = nil) async -> Result<[CKRecord], WCError> {
         var changed = false
         
-        let record = CKRecord(recordType: RecordTypes.matches, recordID: CKRecord.ID(recordName: original.id))
+        let record = CKRecord(recordType: RecordTypes.matches.title, recordID: CKRecord.ID(recordName: original.id))
         if let id = id, id != original.id {
             changed = true
             record.setValue(id,             forKey: CKMatchesRecordKeys.id)
@@ -275,7 +275,7 @@ extension CKManager {
         switch originals {
         case let (array as [CKStadiumEntity]) as Any:
             for value in array {
-                let item = CKRecord(recordType: RecordTypes.stadiums, recordID: CKRecord.ID(recordName: value.id))
+                let item = CKRecord(recordType: RecordTypes.stadiums.title, recordID: CKRecord.ID(recordName: value.id))
                 item.setValue(value.id,             forKey: CKStadiumRecordKeys.id)
                 item.setValue(value.name,           forKey: CKStadiumRecordKeys.name)
                 item.setValue(value.capacity,       forKey: CKStadiumRecordKeys.capacity)
@@ -285,7 +285,7 @@ extension CKManager {
             }
         case let (array as [CKTeamsEntity]) as Any:
             for value in array {
-                let item = CKRecord(recordType: RecordTypes.teams, recordID: CKRecord.ID(recordName: value.id))
+                let item = CKRecord(recordType: RecordTypes.teams.title, recordID: CKRecord.ID(recordName: value.id))
                 item.setValue(value.id,             forKey: CKTeamsRecordKeys.id)
                 item.setValue(value.name,           forKey: CKTeamsRecordKeys.name)
                 item.setValue(value.flag,           forKey: CKTeamsRecordKeys.flag)
@@ -297,7 +297,7 @@ extension CKManager {
             }
         case let (array as [CKTablesEntity]) as Any:
             for value in array {
-                let item = CKRecord(recordType: RecordTypes.tables, recordID: CKRecord.ID(recordName: value.id))
+                let item = CKRecord(recordType: RecordTypes.tables.title, recordID: CKRecord.ID(recordName: value.id))
                 item.setValue(value.id,             forKey: CKTablesRecordKeys.id)
                 item.setValue(value.teamID,         forKey: CKTablesRecordKeys.teamID)
                 item.setValue(value.points,         forKey: CKTablesRecordKeys.points)
@@ -312,7 +312,7 @@ extension CKManager {
             }
         case let (array as [CKMatchesEntity]) as Any:
             for value in array {
-                let item = CKRecord(recordType: RecordTypes.matches, recordID: CKRecord.ID(recordName: value.id))
+                let item = CKRecord(recordType: RecordTypes.matches.title, recordID: CKRecord.ID(recordName: value.id))
                 item.setValue(value.id,             forKey: CKMatchesRecordKeys.id)
                 item.setValue(value.index,          forKey: CKMatchesRecordKeys.index)
                 item.setValue(value.teamHomeID,     forKey: CKMatchesRecordKeys.teamHomeID)
@@ -326,7 +326,7 @@ extension CKManager {
             }
         case let (array as [CKGroupsEntity]) as Any:
             for value in array {
-                let item = CKRecord(recordType: RecordTypes.groups, recordID: CKRecord.ID(recordName: value.id))
+                let item = CKRecord(recordType: RecordTypes.groups.title, recordID: CKRecord.ID(recordName: value.id))
                 item.setValue(value.id,             forKey: CKGroupsRecordKeys.id)
                 item.setValue(value.name,           forKey: CKGroupsRecordKeys.name)
                 item.setValue(value.index,          forKey: CKGroupsRecordKeys.index)

@@ -44,6 +44,7 @@
 		DFA0BB73280602AD00813F2B /* CKGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB72280602AD00813F2B /* CKGroups.swift */; };
 		DFA0BB75280602F800813F2B /* CKConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB74280602F800813F2B /* CKConstants.swift */; };
 		DFA0BB7728060D2300813F2B /* CKManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA0BB7628060D2300813F2B /* CKManager.swift */; };
+		DFD19C1C280C5A410072FFB1 /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD19C1B280C5A410072FFB1 /* PasswordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 		DFA0BB72280602AD00813F2B /* CKGroups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKGroups.swift; sourceTree = "<group>"; };
 		DFA0BB74280602F800813F2B /* CKConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKConstants.swift; sourceTree = "<group>"; };
 		DFA0BB7628060D2300813F2B /* CKManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CKManager.swift; sourceTree = "<group>"; };
+		DFD19C1B280C5A410072FFB1 /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 		DF326C0027F8231800497CDF /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				DFD19C1B280C5A410072FFB1 /* PasswordView.swift */,
 				DF326C0327F823DA00497CDF /* MainNavigationController.swift */,
 				DF326C0527F8242C00497CDF /* MainViewController.swift */,
 				DF350ED127FABE100036BE74 /* MainViewController+NSToolbar.swift */,
@@ -407,6 +410,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFD19C1C280C5A410072FFB1 /* PasswordView.swift in Sources */,
 				DF326BD527F822CE00497CDF /* WorldCup.xcdatamodeld in Sources */,
 				DFA0BB4128054F0400813F2B /* Constants.swift in Sources */,
 				DF326C0C27F828C800497CDF /* Service.swift in Sources */,

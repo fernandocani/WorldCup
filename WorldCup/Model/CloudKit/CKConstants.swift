@@ -5,13 +5,22 @@
 //  Created by Fernando Cani on 12/04/22.
 //
 
-enum RecordTypes {
-    static let groups   = "Groups"
-    static let matches  = "Matches"
-    static let players  = "Players"
-    static let stadiums = "Stadiums"
-    static let teams    = "Teams"
-    static let tables   = "Tables"
+enum RecordTypes: CaseIterable {
+    case groups
+    case matches
+    case stadiums
+    case teams
+    case tables
+    
+    var title: String {
+        switch self {
+        case .groups:   return "Groups"
+        case .matches:  return "Matches"
+        case .stadiums: return "Stadiums"
+        case .teams:    return "Teams"
+        case .tables:   return "Tables"
+        }
+    }
 }
 
 extension CKManager {

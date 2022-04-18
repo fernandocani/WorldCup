@@ -38,7 +38,7 @@ class CKGroups {
     class func fetch() async -> Result<[CKGroupsEntity], WCError> {
         let predicate = NSPredicate(value: true)
         //let predicate = NSPredicate(format: "%K == %@", RecordKeys.gender, "M")
-        let query = CKQuery(recordType: RecordTypes.groups, predicate: predicate)
+        let query = CKQuery(recordType: RecordTypes.groups.title, predicate: predicate)
         let operation = CKQueryOperation(query: query)
         print("fetching...")
         let itens: [CKGroupsEntity] = await withCheckedContinuation { continuation in
